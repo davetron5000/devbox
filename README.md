@@ -1,191 +1,160 @@
-# Dev Environment for Sustainable Web Development with Ruby on Rails
+# Dockbox - Create and Manage Dev Environments with Docker
 
-This is a basis for creating a Ruby on Rails development environment using Docker.  It is based on the development environment used for my book [Sustainable Web Development with Ruby on Rails](https://sustainable-rails.com) and can be used and customized to meet any needs for doing local development.
+Dockbox provides a way to create and manage a dev environment using containers.  It simplifies how ancillary services like
+databases are run, reduces the number of steps required to do development on your app, and creates a consistent base for the entire
+team to work on the app. And you can use your editor on your computer to do it.
 
-## What problem does this solve?
+Isn't this just Docker and a `docker-compose.yml` file?  Mostly, but it's also part convention and part light scripting to make the
+process easier.
 
-* Setting up dependencies for developing Rails apps is not easy, especially as operating systems change.
-* Although Docker can solve this, it is difficult to use and difficult to configure.
+# Example Workflows
 
-## How does it solve it?
+## Set up Your Dev Environment
 
-This provides a base `Dockerfile` to define an image in which your app can run, a base `docker-compose.yml` file that will start a
-container based on that image, along with a Postgres and Redis accessible to the container, and several helper scripts to make
-dealing with everything much simpler.
+Assuming you are setting up a fresh environment for an app using Dockbox:
 
-Once everything is started up, you execute your `rails` commands inside the container, but can edit your code on your computer
-using whatever editor you like.
+1. Install Docker
+1. Install your source control program (e.g. Git)
+1. Install your favorite code editor
+1. Clone the app's source code
+1. `dx/start`
 
-## Example
 
-```
-> bin/init # one time only, does some setup for you
-> bin/start # Postgres & Redis are now running, and a third container
-            # is running that has Ruby, Node, Chromium, and Rails in it
-            # along with access to your app's source code
-```
+That's it!  You are now ready to go
 
-In another terminal:
+## Do a Test-Driven-Development Cycle
 
-```
-> bin/exec bash
-root@4d1ac12d40db:~/work# bin/rails test
-# Runs all your tests
-```
+Suppose you are writing a Rails app, and you have a test called `test/system/buy_merch_test.rb`.
 
-## How to Use
+1. Edit the file `test/system/buy_merch_test.rb` on your computer.
+1. `dx/exec bin/rails test test/system/buy_merch_test.rb`
+1. View the output of the test
+1. Edit your app's code to make the test pass (again, the editing in your editor on your computer)
+1. `dx/exec bin/rails test test/system/buy_merch_test.rb`
+1. The test passes!
 
-1. Make sure Docker is installed
-1. Clone this repo
+Note that this should be almost identical to doing dev on your computer.  You can alleviate the need for `dx/exec` each time like
+so:
+
+1. `dx/exec bash`
+1. Edit the file `test/system/buy_merch_test.rb` on your computer.
+1. `bin/rails test test/system/buy_merch_test.rb`
+1. View the output of the test
+1. Edit your app's code to make the test pass (again, the editing in your editor on your computer)
+1. `bin/rails test test/system/buy_merch_test.rb`
+1. The test passes!
+
+## Run Your App Locally
+
+Let's suppose your app has a script named `bin/run` that runs it on port 3000.
+
+1. `dx/exec bin/run`
+1. Open up `http://localhost:3000` on your computer in whatever browser you want.
+
+The point is that *any* command-line based flow can be mapped to Dockbox by running your command line commands inside the dev
+container using `dx/exec`
+
+# Set Up
+
+There are two types of setup needed to use Dockbox.  The first is to install Dockbox in your app. The second is for each developer
+to configure Dockbox for their computer.
+
+## Install Dockbox in an App
+
+1. Make sure your app is checked out somewhere
+1. Clone this Repo
 1. `bin/init`
-   - This will ask several questions that will name your project, name the image you'll create where you
-     can run your app, and set your platform so you run images that match your processor.
-1. `bin/start`
-1. In another terminal: `bin/exec bash`
+1. Follow the prompts
 
-You should be able to run all your development commands such as `bin/rails c`, `bin/dev`, `npm install the-world` and so forth.
-You should see that `/root/work` (where you are placed immediately after running `bin/bash`) contains the files from your computer.
+Once done, several files will have been added to your app's repo. If your app has a `.gitignore`, will have been modified.  Review
+these, then commit them.
 
-## Customizing
+## Per-Developer Dockbox Setup
 
-This repo is intended to be the basis for *your* dev environment, so my recommendation is to create a new repo
-where you manage your dev-environment and seed it with these files.
+Because you may have a mix of hardware architectures on the team, each developer needs to do their own setup to ensure they are
+running appropriate images for the services and for the app.
 
-There are four main points where you can customize things, starting from most common to least common:
+1. Make sure the app is checked out
+1. `dx/setup`
+1. Follow the prompts
 
-* `Dockerfile` - This controls what is available on the image where your app is run.  The default sets up Node, Chromium, the
-Postgres client, and Ruby.  If you don't need those, remove them. If you need other stuff, like wkhtmltopdf, add the requisite
-`RUN` directives to install them.
-* `docker-compose.yml` - This controls the services available to your app. If you don't need Redis, remove it. If you need elasticsearch, add it.  DockerHub has tons of service you can quickly plug in and run.
-* `docker-compose.env` - This is well-documented and controls the name of your project, name of your image, and your architecture.
-`bin/init` should've walked you through setting it up.
-* The scripts in `bin/` - These all wrap Docker commands so you don't have to type a lot or remember the various flags needed to
-get things working.  You can just change these!
+That's it!
 
-## Where is this being used?
+## Update Your Dockbox Configure When Dockbox has a New Version
 
-This was extracted from the toolchain I created for my book, [Sustainable Web Development with Ruby on Rails](https://sustainable-rails.com).  All the examples and code in that book were executed many times in this development environment.  I have also been using this for the past two years at my startup to manage the development of two Rails apps and a Zendesk sidebar app.
+While Dockbox is not a "live" dependency of your app (meaning you can install it and then manage the scripts and files yourself), you can refresh your app's Dockbox installation if and when Dockbox changes:
 
-## The World's Quickest Docker Tutorial
+1. Make sure your app is checked out and you have `cd`ed there
+1. `dx/update-dx`
+1. This will clone Dockbox from GitHub and compare to your copies of the files.  It will show you what it's going to do and ask for confirmation:
+   1. Each script in `dx/`
+   1. Add any new scripts
+   1. Remove any old scripts
+   1. Analyze `docker-compose.dx.yml` for incompatibilities
+   1. Output manual instructions for changes needed to `docker-compose.dx.yml` and `Dockerfile.dx`
 
-Docker is confusing, poorly documented, and poorly designed, so if it makes you feel as stupid as it makes me feel, that is OK.  Here is a bit of conceptual grounding to help understand what is going on.
+# Details
 
-* A `Dockerfile` is a set of instructions for a computer you would like to run.
-* *Building* a `Dockerfile` produces an *Image*.  This is a set of bytes on your hard drive and you could consider
-this to be a clone of the hard drive of a computer you want to run.
-* *Starting* an image produces a *Container*.  This is a virtualized computer running the image
-* In `docker-compose.yml`, there are services, which describe the containers you want to run in unision. Because a
-container is a virtualized computer running an image, each service requires an image that will be run.  All the
-containers are run on the same network and can see each other.
-* When you see the word *Host* that is *your computer*. That is where Docker is running. I cannot think of a more confusing and
-unintuitive term  but that is what they went with.
+If you look at what all this does, it's basically:
 
-To make another analogy, `Dockerfile` is like source code to a class. An image is the class itself, and a container
-is an object you created from that class. `docker-compose.yml` is your program that integrates objects of several
-classes together.
+* A `Dockerfile.dx` where your app can run and be tested.
+* A `docker-compose.dx.yml` that configures your app and any needed services.
+* A `dx/` folder with some bash scripts
+* Three configuration files:
+  * `dx/docker-compose.env.base` - per project environment variables needed by `docker-compose.dx.yml` (this is checked in)
+  * `dx/docker-compose.env.local` - per developer environment variables needed by `docker-compose.dx.yml` (this is not checked in)
+  * `dx/docker-compose.env` - a summation of the previous two files becuase `docker compose --env-file` requires one file (this is not checked in)
 
-## Helpful Notes
+Once `bin/init` has been run, it's helpful to consider your relationship with Dockbox:
 
-Inside the container, you can connect to Postgres like so:
+* `Dockerfile.dx` and `docker-compose.dx.yml` - You own these and should change them as needed to make sure you have the services
+* `dx/` folder can be managed by Dockbox and doesn't need to change.  But, because Dockbox is not a system dependency you install
+globablly, you can just change stuff here if you like.
 
-```
-> PGPASSWORD=password psql -Hdb -Upostgres -p5432
-postgres=#
-```
+## How it Works
 
-When you run Rails, you need to tell it to bind to `0.0.0.0`, so you can't just do `bin/rails c`.  Instead you
-must:
-```
-> bin/rails c -b0.0.0.0
-```
+(If you do not know about Docker, [learn about it first](./docker.md) so this section will make sense)
 
-When you do that, your Rails app should be available to your localhost on port 9999 (or whatever value you set in `bin/vars` for `EXPOSE`)
+`Dockerfile.dx` is not intended for production. It's entire purpose is to setup and install the tools needed to run your app.  If all your app needs is a programming language, `Dockerfile.dx` will be pretty minimal.  In particular, you won't find `RUN`, `EXPOSE`, or any other stuff like that, because it's not needed. You will never just run an image based off this `Dockerfile`.
 
-## Core Values
+`docker-compose.dx.yml` is a Docker Compose file that will run a container for the app and then any other services needed.  The
+stanza for the app is what's important: It sets up a port mapping, configures a bind mount to access the app's source code, and
+sets a few other things needed to make it easy to "log in" to this container.
 
-* As few dependencies as possible
-* Your computer is not your development environment, it *runs* your development environment
-* Useful for working professionals
-* Programmers should understand how their development environment works
+`dx/docker-compose.env` (which is created by summing `docker-compose.env.base` and `docker-compose.env.local`) is needed to control the behavior of the Docker system. In particular, it will control the architecture used for pulling images of related services, will ensure that the image built by `dx/build` is used here, and provide a project name which is needed to manage running containers.
 
-### Non-Values
+The scripts in `bin/` basically wrap commands to the `docker` command-line client.
 
-* Flexibility
-* Production Deployments
-* Hiding details about how this works from the user
+### Core Values
 
+I know, how can a few shell scripts have *values*, right?  Well, they do.
 
-### Things That Could be Improved
+* Versions of software and tools used to build an app should be consistent across its developers
+* Your computer is not your app's dev environment, but instead *runs* it
+* You should edit code in the editor of your choice
+* Scripts are better than documentation or shell aliases
 
-* A way to QA this on other platforms like Linux or Windows without me having to buy a Linux machine or a Windows
-machine.
-* Ability to target more than just ARM64 without a lot of customizations
-* Probably some Docker best practices I'm not aware of needing to consider
+These values have consequences:
 
-## FAQ
+* Your dev environment should be *virtual*
+* Your dev environment's primary functions should be *scripted* and not require any flags or options by default
+* Your app's source code should be accessible to both the dev environment and your computer
+* Only the most minimal configuration that is developer-specific should be required to be specified by each developer
 
-### Why is this ARM64?
+# Q&A
 
-When running Chrome inside an AMD-based Docker container, Apple Silicon is unable to emulate certain system calls
-it needs, thus you cannot run Rails system tests in an AMD-based Docker container running on Apple Silicon.
+## Why Bash Scripts Copied to a Repo?
 
-### Why is this using Chromium?
+By nature, dev environment setup occurs in a system in a state of nascency. You cannot really assume *any* software exists to rely
+upon.  Dockbox assumes Docker and bash are installed, as this is a good assumption.  Dockbox does not, for example, assume any
+package manager, or any programming language like Ruby or Python.
 
-See the answer above.  Chrome is not available for ARM64-based Linux operating systems, however Chromium is.
+## Why not `curl | bash` installation?
 
-### How can I use AMD-based Images?
+If you are going to copy and paste something into your terminal to install it, it might as well be more likely to be a command you
+can inspect and understand.  `git clone` is fine.
 
-Change this:
+## Why not `dx start`?
 
-```
-FROM arm64v8/ruby:3.1
-```
-
-to whatever base image you like, such as `amd64/ruby:3.1`.
-
-If you do that, you don't have to use chromium. You can remove this line:
-
-```
-RUN apt-get -y install chromium chromium-driver
-```
-
-You will need to replace it with a more convoluted set of invocations that has changed many times since I first
-created this repo, so I will not document them here, as they are likely to be out of date. I'm sorry about that,
-but Google does not care about making this process easy.
-
-### What about that docked rails thing?
-
-The Rails GitHub org has a repo called [docked](https://github.com/rails/docked) that ostensibly sets up a dev
-environment for Rails.  It may evolve to be more useful, but here are the problems it has that this repo does not:
-
-* It will not work on Apple Silicon for reasons mentioned above re: Chrome
-* It does not provide a solution for running dependent infrastructure like Postgres which, in my experience, is much
-harder to do than getting Rails running.
-* It requires setting up shell aliases, which I dislike.
-* It uses an odd-numbered version of Node, and it's not a good idea to use that for development or production
-  unless you are working on Node itself.  Odd-numbered versions go end-of-life frequently and become unsupported. It's better and safer to use even-numbered versions.
-* It is designed for beginners to programming and Rails, which is great because we need more Rails developers, but
-that is a different use-case than a development environment for professional, experienced Rails developers. And
-yes, I mean "professional" in the sense of "getting paid to write Rails" and not in whatever stupid way Uncle Bob
-means it.
-
-### Why is this all generated from templates?
-
-`docker-compose.yml` and `Dockerfile` share some values, but Docker provides no easy mechanism for that that I could figure out. So, the files are generated.
-
-### Why not use Vagrant?
-
-Docker is a more generally useful skill to have, so I decided to focus on this and not learn Vagrant, which is less
-useful.
-
-## Contributions
-
-I would love some!  I am not a Docker expert and I only have used this for the way I do Rails. I'd love for this to
-be more useful (see above).
-
-A few things I am not interested in:
-
-* Adding dependencies.  I love Ruby and love writing command line apps in Ruby but Ruby's exsitence is not
-reliable, which is why the scripts are in bash.
-* Non-Rails web development. I want this to be about Rails
-* Deprecated or unsupported versions of things
+To the extent that devs are typing commands on the command-line, they should be short, auto-completeable on a stock shell, and not
+require spaces or complex subcommands.

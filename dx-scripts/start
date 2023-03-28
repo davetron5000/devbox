@@ -5,15 +5,15 @@ set -e
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 . ${SCRIPT_DIR}/setupkit.sh.lib
+. ${SCRIPT_DIR}/dx.sh.lib
 
 usage_on_help "Starts all services, including a container in which to run your app" "" ${@}
-
-. ${SCRIPT_DIR}/../docker-compose.env
+ensure_docker_compose_env
 
 log "🚀" "Starting docker-compose.yml"
 
 log "🚉" "Exporting DOCKER_DEFAULT_PLATFORM as '${DOCKER_DEFAULT_PLATFORM}'"
 export DOCKER_DEFAULT_PLATFORM
-docker compose -p "${PROJECT_NAME}" --env-file ${SCRIPT_DIR}/../docker-compose.env up --timestamps --force-recreate
+docker compose -f docker-compose.dx.yml -p "${PROJECT_NAME}" --env-file ${ENV_FILE} up --timestamps --force-recreate
 
 # vim: ft=bash
