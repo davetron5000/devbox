@@ -20,7 +20,7 @@ if [ -z "$CMD" ]; then
   exit 1
 fi
 
-SERVICE="${SERVICE_NAME:-app}"
+SERVICE="${SERVICE_NAME:-${DEFAULT_SERVICE}}"
 log "🚂" "Running '$CMD' inside container with service name '${SERVICE}'"
 docker compose -f docker-compose.dx.yaml -p "${PROJECT_NAME}" --env-file ${ENV_FILE} exec ${SERVICE} ${@}
 
