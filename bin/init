@@ -12,28 +12,22 @@ if [ -z "$1" ]; then
   fatal "You must supply the path to your app's root"
 fi
 
+DX_SCRIPTS_DIR=$(realpath ${SCRIPT_DIR}/../dx-scripts)
+DX_TEMPLATES_DIR=$(realpath ${SCRIPT_DIR}/../templates)
+DX_SNIPPETS_DIR=$(realpath ${DX_TEMPLATES_DIR}/snippets)
+DX_SERVICES_DIR=$(realpath ${DX_TEMPLATES_DIR}/services)
+
 PROJECT_ROOT=$(realpath $1)
-
-if [ ! -e "${PROJECT_ROOT}" ]; then
-  fatal "${PROJECT_ROOT} does not exist. You must check out your app's project dir to run $0"
-fi
-
 DX_RELATIVE_DIR=dx
-DX_DIR=${PROJECT_ROOT}/${DX_RELATIVE_DIR}
+PROJECT_DX_DIR=${PROJECT_ROOT}/${DX_RELATIVE_DIR}
+PROJECT_DOCKERFILE=${PROJECT_ROOT}/Dockerfile.dx
+PROJECT_COMPOSE_FILE=${PROJECT_ROOT}/docker-compose.dx.yml
 
-if [ -e ${DX_DIR} ]; then
-  fatal "Dockbox is already installed in ${PROJECT_ROOT}, since it has a dx/ directory"
-fi
 
-DOCKERFILE=${PROJECT_ROOT}/Dockerfile.dx
-if [ -e ${DOCKERFILE} ]; then
-  fatal "${DOCKERFILE} already exists. Something may be wrong. Aborting"
-fi
-
-COMPOSE_FILE=${PROJECT_ROOT}/docker-compose.dx.yml
-if [ -e ${COMPOSE_FILE} ]; then
-  fatal "${COMPOSE_FILE} already exists. Something may be wrong. Aborting"
-fi
+require_exist     ${PROJECT_ROOT}          "${PROJECT_ROOT} does not exist. You must check out your app's project dir to run $0"
+require_not_exist ${PROJECT_DX_DIR}        "Dockbox is already installed in ${PROJECT_ROOT}, since it has a dx/ directory"
+require_not_exist ${PROJECT_DOCKERFILE}    "${PROJECT_DOCKERFILE} already exists. Something may be wrong. Aborting"
+require_not_exist ${PROJECT_COMPOSE_FILE}  "${PROJECT_COMPOSE_FILE} already exists. Something may be wrong. Aborting"
 
 main() {
   intro
@@ -51,18 +45,19 @@ intro() {
   log "📝" "Hit return to begin"
   read IGNORED
 }
+
 collect_info() {
   log
   log "1️⃣ " "Collecting Information"
   log
 
   PROJECT_NAME_GUESS=$(basename ${PROJECT_ROOT})
-  user_input "📊" "What is your project's name, in letters and dashes only?" $PROJECT_NAME_GUESS
-  PROJECT_NAME=$INPUT
+  user_input "📊" "What is your project's name, in letters and dashes only?" ${PROJECT_NAME_GUESS}
+  PROJECT_NAME=${INPUT}
   user_input "🏢" "What is your GitHub or DockerHub org name?"
-  ORG_NAME=$INPUT
+  ORG_NAME=${INPUT}
   user_input "🏷 " "What tag would you like to use? Dockbox recommends something meaningful for tool versions and not the version of your app"
-  TAG=$INPUT
+  TAG=${INPUT}
 }
 
 copy_files() {
@@ -70,16 +65,13 @@ copy_files() {
   log "2️⃣ " "Copying Files..."
   log
 
-  log "📂" "Creating ${DX_DIR}"
-  mkdir ${DX_DIR}
+  log "📂" "Creating ${PROJECT_DX_DIR}"
+  mkdir ${PROJECT_DX_DIR}
 
-  for file in ${SCRIPT_DIR}/../dx-scripts/* ${SCRIPT_DIR}/setupkit.sh.lib ${SCRIPT_DIR}/../show-help-in-app-container-then-wait.sh; do
-    log "🖨" "Copying ${file} to ${DX_DIR}"
-    cp ${file} ${DX_DIR}
+  for file in ${DX_SCRIPTS_DIR}/* ${SCRIPT_DIR}/setupkit.sh.lib; do
+    log "🖨" "Copying ${file} to ${PROJECT_DX_DIR}"
+    cp ${file} ${PROJECT_DX_DIR}
   done
-
-  log "🖨" "Copying setupkit.sh.lib to ${DX_DIR}"
-  cp ${SCRIPT_DIR}/setupkit.sh.lib ${DX_DIR}
 }
 
 create_config() {
@@ -87,40 +79,47 @@ create_config() {
   log "3️⃣ " "Creating configuration files..."
   log
 
-  log "⛺️" "Creating ${DX_DIR}/docker-compose.base.env"
-  cat ${SCRIPT_DIR}/../templates/docker-compose.env | \
-    sed "s/%PROJECT_NAME%/${PROJECT_NAME}/g" | \
-    sed "s/%ORG_NAME%/${ORG_NAME}/g" | \
-    sed "s/%TAG%/${TAG}/g" > ${DX_DIR}/docker-compose.base.env
+  project_compose_base_env=${PROJECT_DX_DIR}/docker-compose.base.env
+  dx_compose_template_env=${DX_TEMPLATES_DIR}/docker-compose.template.env
 
-  GITIGNORE=${PROJECT_ROOT}/.gitignore
-  COMPOSE_ENV_LOCAL=${DX_RELATIVE_DIR}/docker-compose.local.env
-  COMPOSE_ENV_DERIVED=${DX_RELATIVE_DIR}/docker-compose.env
+  log "⛺️" "Creating ${project_compose_base_env}"
 
-  if [ -f ${GITIGNORE} ]; then
+  export PROJECT_NAME
+  export ORG_NAME
+  export TAG
+  cat ${dx_compose_template_env} | envsubst '$PROJECT_NAME,$ORG_NAME,$TAG' > ${project_compose_base_env}
+  export -n PROJECT_NAME
+  export -n ORG_NAME
+  export -n TAG
 
-    if grep -q ${COMPOSE_ENV_LOCAL} ${GITIGNORE} ; then
-      log "🧼" "Already ignoring ${COMPOSE_ENV_LOCAL}"
+  project_gitignore=${PROJECT_ROOT}/.gitignore
+  project_compose_local_env=${DX_RELATIVE_DIR}/docker-compose.local.env
+  project_compose_env=${DX_RELATIVE_DIR}/docker-compose.env
+
+  if [ -f ${project_gitignore} ]; then
+
+    if grep -q ${project_compose_local_env} ${project_gitignore} ; then
+      log "🧼" "Already ignoring ${project_compose_local_env}"
     else
-      log "🧼" "Adding ${COMPOSE_ENV_LOCAL} to .gitignore"
-      echo "# This is a per-developer configuration file for Dockbox and should not be committed" >> ${GITIGNORE}
-      echo ${COMPOSE_ENV_LOCAL} >> ${GITIGNORE}
+      log "🧼" "Adding ${project_compose_local_env} to .gitignore"
+      echo "# This is a per-developer configuration file for Dockbox and should not be committed" >> ${project_gitignore}
+      echo ${project_compose_local_env} >> ${project_gitignore}
     fi
 
-    if grep -q ${COMPOSE_ENV_DERIVED} ${GITIGNORE}; then
-      log "🧼" "Already ignoring ${COMPOSE_ENV_DERIVED}"
+    if grep -q ${project_compose_env} ${project_gitignore}; then
+      log "🧼" "Already ignoring ${project_compose_env}"
     else
-      log "🧼" "Adding ${COMPOSE_ENV_DERIVED} to .gitignore"
-      echo "# This is a derived configuration file for Dockbox and should not be committed" >> ${GITIGNORE}
-      echo "${COMPOSE_ENV_DERIVED}" >> ${GITIGNORE}
+      log "🧼" "Adding ${project_compose_env} to .gitignore"
+      echo "# This is a derived configuration file for Dockbox and should not be committed" >> ${project_gitignore}
+      echo "${project_compose_env}" >> ${project_gitignore}
     fi
 
   else
 
     log "🧼" "No .gitignore found. You should configure your source control system to preven these files from being committed:"
     log
-    log "🧼" "   ${COMPOSE_ENV_LOCAL}"
-    log "🧼" "   ${COMPOSE_ENV_DERIVED}"
+    log "🧼" "   ${project_compose_local_env}"
+    log "🧼" "   ${project_compose_env}"
     log
     log "🧼" "They are derived files and could change per developer"
     log
@@ -135,8 +134,8 @@ create_dockerfile() {
   log
   log "4️⃣ " "Creating a Dockerfile for development"
   log
-  BASE_IMAGE=
-  while [ -z "${BASE_IMAGE}" ]; do
+  base_image_name=
+  while [ -z "${base_image_name}" ]; do
     user_input "🎆 " "What base image do you want? If you aren't sure, enter 'help'"
     if [ "${INPUT}" = "help" ]; then
       log "💭" "For development, you probably want your programming language's official base image"
@@ -152,8 +151,8 @@ create_dockerfile() {
       log "💭" "Given all that, your base image should be «lang»:«version»"
       log "💭" "(for example, ruby:3.2)"
     else
-      BASE_IMAGE=${INPUT}
-      case "${BASE_IMAGE}" in
+      base_image_name=${INPUT}
+      case "${base_image_name}" in
         *:*)
           ;;
         *)
@@ -162,51 +161,49 @@ create_dockerfile() {
             log "✅" "OK"
           else
             log "🔄" "Try again"
-            BASE_IMAGE=
+            base_image_name=
           fi
       esac
     fi
   done
 
-  echo "FROM ${BASE_IMAGE}" > ${DOCKERFILE}
-  echo >> ${DOCKERFILE}
-  echo "ENV DEBIAN_FRONTEND noninteractive" >> ${DOCKERFILE}
-  echo >> ${DOCKERFILE}
+  echo "FROM ${base_image_name}" > ${PROJECT_DOCKERFILE}
+  echo >> ${PROJECT_DOCKERFILE}
+  echo "ENV DEBIAN_FRONTEND noninteractive" >> ${PROJECT_DOCKERFILE}
+  echo >> ${PROJECT_DOCKERFILE}
 
   log "🧩" "Dockbox can prime your Dockerfile with snippets relevant to your project"
   log
   log "🧩" "The order in which these are included somewhat matters, so you may want"
   log "🧩" "to review the generated Dockerfile when it's done"
 
-  SNIPPETS=${SCRIPT_DIR}/../templates/Dockerfile.snippets
-
-  while [ "$INPUT" != "done" ]; do
+  while [ "${INPUT}" != "done" ]; do
     user_input "🎛 " "Enter 'list' to list all known snippets, 'done' when done adding snippets"
-    if [ "$INPUT" = "list" ]; then
-      for snippet in `ls ${SNIPPETS}/*.snippet`; do 
+    if [ "${INPUT}" = "list" ]; then
+      for snippet in `ls ${DX_SNIPPETS_DIR}/*.snippet`; do 
         filename=$(basename -- ${snippet})
         snippet_name="${filename%.*}"
-        log "📔" $snippet_name
+        log "📔" ${snippet_name}
       done
     else
-      if [ "$INPUT" != "done" ]; then
-        SNIPPET_FILE=${SNIPPETS}/${INPUT}.snippet
-        if [ ! -e ${SNIPPET_FILE} ]; then
+      if [ "${INPUT}" != "done" ]; then
+        snippet_file=${DX_SNIPPETS_DIR}/${INPUT}.snippet
+        if [ ! -e ${snippet_file} ]; then
           log "🪹" "No snippet for ${INPUT}"
         else
-          log "🧱" "Injecting ${INPUT} into ${DOCKERFILE}"
-          echo >> ${DOCKERFILE}
-          cat ${SNIPPET_FILE} | grep -v "# vim:" >> ${DOCKERFILE}
-          echo >> ${DOCKERFILE}
+          log "🧱" "Injecting ${INPUT} into ${PROJECT_DOCKERFILE}"
+          echo >> ${PROJECT_DOCKERFILE}
+          cat ${snippet_file} | grep -v "# vim:" >> ${PROJECT_DOCKERFILE}
+          echo >> ${PROJECT_DOCKERFILE}
         fi
       fi
     fi
   done
 
-  echo "# This entrypoint produces a nice help message and waits around for you to do" >> ${DOCKERFILE}
-  echo "# something with the container." >> ${DOCKERFILE}
-  echo "COPY ${DX_RELATIVE_DIR}/show-help-in-app-container-then-wait.sh /root" >> ${DOCKERFILE}
-  echo >> ${DOCKERFILE}
+  echo "# This entrypoint produces a nice help message and waits around for you to do" >> ${PROJECT_DOCKERFILE}
+  echo "# something with the container." >> ${PROJECT_DOCKERFILE}
+  echo "COPY ${DX_RELATIVE_DIR}/show-help-in-app-container-then-wait.sh /root" >> ${PROJECT_DOCKERFILE}
+  echo >> ${PROJECT_DOCKERFILE}
 }
 
 create_compose_file() {
@@ -214,50 +211,50 @@ create_compose_file() {
   log "5️⃣ " "Creating a docker-compose file for development"
   log
 
-  cp ${SCRIPT_DIR}/../templates/docker-compose.yml ${COMPOSE_FILE}
+  dx_docker_compose_template=${DX_TEMPLATES_DIR}/docker-compose.template.yml
+
+  cp ${dx_docker_compose_template} ${PROJECT_COMPOSE_FILE}
 
   user_input "🪠" "What port does your app run on?"
-  CONTAINER_PORT=${INPUT}
-  user_input "🪠" "What port would you like that mapped to on your computer?" ${CONTAINER_PORT}
-  HOST_PORT=${CONTAINER_PORT}
+  container_port=${INPUT}
+  user_input "🪠" "What port would you like that mapped to on your computer?" ${container_port}
+  host_port=${INPUT}
 
-  echo "    ports:" >> ${COMPOSE_FILE}
-  echo "      - \"${HOST_PORT}:${CONTAINER_PORT}\"" >> ${COMPOSE_FILE}
+  echo "    ports:" >> ${PROJECT_COMPOSE_FILE}
+  echo "      - \"${host_port}:${container_port}\"" >> ${PROJECT_COMPOSE_FILE}
 
   log "🧩" "Dockbox can prime your compose file with services your project needs, like a database"
 
   services=()
 
-  SERVICE_SNIPPETS=${SCRIPT_DIR}/../templates/docker-compose.snippets
-
-  while [ "$INPUT" != "done" ]; do
+  while [ "${INPUT}" != "done" ]; do
     user_input "🎛 " "Enter 'list' to list all known services, 'done' when done adding snippets"
-    if [ "$INPUT" = "list" ]; then
-      for snippet in `ls ${SERVICE_SNIPPETS}/*.snippet`; do 
+    if [ "${INPUT}" = "list" ]; then
+      for snippet in `ls ${DX_SERVICES_DIR}/*.snippet`; do 
         filename=$(basename -- ${snippet})
         snippet_name="${filename%.*}"
-        log "📔" $snippet_name
+        log "📔" ${snippet_name}
       done
     else
-      if [ "$INPUT" != "done" ]; then
-        SNIPPET_FILE=${SERVICE_SNIPPETS}/${INPUT}.snippet
-        if [ ! -e ${SNIPPET_FILE} ]; then
+      if [ "${INPUT}" != "done" ]; then
+        snippet_file=${DX_SERVICES_DIR}/${INPUT}.snippet
+        if [ ! -e ${snippet_file} ]; then
           log "🪹" "No snippet for ${INPUT}"
         else
-          log "🧱" "Injecting ${INPUT} into ${COMPOSE_FILE}"
+          log "🧱" "Injecting ${INPUT} into ${PROJECT_COMPOSE_FILE}"
           services+=(${INPUT})
         fi
       fi
     fi
   done
-  echo "    depends_on:" >> ${COMPOSE_FILE}
+  echo "    depends_on:" >> ${PROJECT_COMPOSE_FILE}
   for service in ${services[@]}; do
-    echo "      ${service}:" >> ${COMPOSE_FILE}
-    echo "        condition: \"service_started\"" >> ${COMPOSE_FILE}
+    echo "      ${service}:" >> ${PROJECT_COMPOSE_FILE}
+    echo "        condition: \"service_started\"" >> ${PROJECT_COMPOSE_FILE}
   done
   for service in ${services[@]}; do
-    SNIPPET_FILE=${SERVICE_SNIPPETS}/${service}.snippet
-    cat ${SNIPPET_FILE} | grep -v "# vim:" >> ${COMPOSE_FILE}
+    snippet_file=${DX_SERVICES_DIR}/${service}.snippet
+    cat ${snippet_file} | grep -v "# vim:" >> ${PROJECT_COMPOSE_FILE}
   done
 }
 
