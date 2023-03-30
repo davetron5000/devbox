@@ -8,16 +8,22 @@ fatal() {
   exit 1
 }
 
+wrap() {
+  cols=$(tput cols)
+  echo "${*}" | fold -w ${cols} -s
+}
+
 log() {
   emoji=$1
   remainder=${*:2}
+
   if [ -z "${NO_EMOJI}" ]; then
-    echo "[ ${0} ] ${*}"
+    wrap "[ ${0} ] ${*}"
   else
     if [ -z "$remainder" ]; then
-      echo "[ ${0} ] ${*}"
+      wrap "[ ${0} ] ${*}"
     else
-      echo "[ ${0} ] ${remainder}"
+      wrap "[ ${0} ] ${remainder}"
     fi
   fi
 }

@@ -13,5 +13,5 @@ ensure_docker_compose_env
 docker build -f Dockerfile.dx -t $IMAGE ./
 
 log "🌈" "Your Docker image has been built tagged '${IMAGE}'"
-log "🔄" "You can now run bin/start to start it up, though you may need to stop it first with Ctrl-C"
+log "🔄" "You can now run dx/start to start it up, though you may need to stop it first with Ctrl-C"
 # vim: ft=bash

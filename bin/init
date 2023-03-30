@@ -39,9 +39,7 @@ main() {
 }
 
 intro() {
-  log "📝" "Dockbox will collect some information from you, then copy its files to your app's source directory."
-  log "📝" "It will also initialize a configuration file and, if you have a .gitignore, add a few lines to it"
-  log "📝" "You can use your source code control system to inspect what it did before accepting the changes"
+  log "📝" "Dockbox will collect some information from you, then copy its files to your app's source directory.It will also initialize a configuration file and, if you have a .gitignore, add a few lines to it You can use your source code control system to inspect what it did before accepting the changes"
   log "📝" "Hit return to begin"
   read IGNORED
 }
