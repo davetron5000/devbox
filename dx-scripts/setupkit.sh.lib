@@ -1,9 +1,11 @@
+# shellcheck shell=bash
+
 fatal() {
   remainder=${*:2}
   if [ -z "$remainder" ]; then
-    log "🛑" ${@}
+    log "🛑" "${@}"
   else
-    log ${@}
+    log "${@}"
   fi
   exit 1
 }
@@ -24,7 +26,7 @@ log() {
 
 usage() {
   echo "usage: ${0} [-h] ${extra_usage}"
-  if [ ! -z "$1" ]; then
+  if [ -n "$1" ]; then
     echo
     echo "DESCRIPTION"
     echo "    ${description}"
@@ -35,11 +37,11 @@ usage() {
 usage_on_help() {
   description=$1
   extra_usage=$2
-  cli_args=${@:3}
+  cli_args=( "${@:3}" ) 
 
-  for arg in ${cli_args}; do
-    if [ ${arg} = "-h" ] || [ ${arg} = "--help" ]; then
-      usage $description
+  for arg in "${cli_args[@]}"; do
+    if [ "${arg}" = "-h" ] || [ "${arg}" = "--help" ]; then
+      usage "${description}"
     fi
   done
 }
@@ -68,7 +70,7 @@ user_input() {
 
   if [ -z "${prompt}" ]; then
     prompt=$(log "${emoji}" "Value: ")
-    if [ ! -z "${default}" ]; then
+    if [ -n "${default}" ]; then
       prompt=$(log "${emoji}" "Value (or hit return to use '${default}): ")
     fi
   fi
@@ -76,7 +78,7 @@ user_input() {
   while [ -z "${INPUT}" ]; do
 
     log "$emoji" "$message"
-    read -p "${prompt}" INPUT
+    read -r -p "${prompt}" INPUT
     if [ -z "$INPUT" ]; then
       INPUT=$default
     fi
