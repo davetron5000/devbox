@@ -4,6 +4,33 @@ Dockbox provides a way to create and manage a dev environment using containers. 
 databases are run, reduces the number of steps required to do development on your app, and creates a consistent base for the entire
 team to work on the app. And you can use your editor on your computer to do it.
 
+## Install
+
+Dockbox assumes you have access to GitHub and have both bash and Docker installed.  Thus to install:
+
+* `git clone blah blah` doesn't matter where
+
+OR
+
+* Download the release and expand it somewhere. Doeson't matter where
+
+## Setup
+
+To add Dockbox to your app, or to create a new app that will use Dockbox:
+
+1. `cd` to wherever you downloaded Dockbox
+1. `bin/init`
+
+## Usage
+
+Dockbox installs all its files into `dx/` at the root of your app's directory.
+
+* `dx/start` - start the dev environment
+* `dx/exec` - run a command inside your app's container
+
+
+----
+
 Isn't this just Docker and a `docker-compose.yml` file?  Mostly, but it's also part convention and part light scripting to make the
 process easier.
 

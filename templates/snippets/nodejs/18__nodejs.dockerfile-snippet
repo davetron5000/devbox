@@ -1,0 +1,5 @@
+# dx.source=https://github.com/nodesource/distributions#using-debian-as-root-2
+# dx.stability=vendor
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
+# vim: ft=Dockerfile

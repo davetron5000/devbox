@@ -1,33 +1,33 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR=$( cd -- "$( dirname -- "${0}" )" > /dev/null 2>&1 && pwd )
 
-. ${SCRIPT_DIR}/setupkit.sh.lib
+. "${SCRIPT_DIR}/setupkit.sh.lib"
 
-usage_on_help "Initialize Dockbox for your app" "[path to app]" ${@}
+usage_on_help "Initialize Dockbox for your app" "[path to app]" "${@}"
 
 if [ -z "$1" ]; then
   fatal "You must supply the path to your app's root"
 fi
 
-DX_SCRIPTS_DIR=$(realpath ${SCRIPT_DIR}/../dx-scripts)
-DX_TEMPLATES_DIR=$(realpath ${SCRIPT_DIR}/../templates)
-DX_SNIPPETS_DIR=$(realpath ${DX_TEMPLATES_DIR}/snippets)
-DX_SERVICES_DIR=$(realpath ${DX_TEMPLATES_DIR}/services)
+DX_SCRIPTS_DIR=$(realpath "${SCRIPT_DIR}"/../dx-scripts)
+DX_TEMPLATES_DIR=$(realpath "${SCRIPT_DIR}"/../templates)
+DX_SNIPPETS_DIR=$(realpath "${DX_TEMPLATES_DIR}"/snippets)
+DX_SERVICES_DIR=$(realpath "${DX_TEMPLATES_DIR}"/services)
 
-PROJECT_ROOT=$(realpath $1)
+PROJECT_ROOT=$(realpath "${1}")
 DX_RELATIVE_DIR=dx
-PROJECT_DX_DIR=${PROJECT_ROOT}/${DX_RELATIVE_DIR}
-PROJECT_DOCKERFILE=${PROJECT_ROOT}/Dockerfile.dx
-PROJECT_COMPOSE_FILE=${PROJECT_ROOT}/docker-compose.dx.yml
+PROJECT_DX_DIR="${PROJECT_ROOT}"/"${DX_RELATIVE_DIR}"
+PROJECT_DOCKERFILE="${PROJECT_ROOT}"/Dockerfile.dx
+PROJECT_COMPOSE_FILE="${PROJECT_ROOT}"/docker-compose.dx.yml
 
 
-require_exist     ${PROJECT_ROOT}          "${PROJECT_ROOT} does not exist. You must check out your app's project dir to run $0"
-require_not_exist ${PROJECT_DX_DIR}        "Dockbox is already installed in ${PROJECT_ROOT}, since it has a dx/ directory"
-require_not_exist ${PROJECT_DOCKERFILE}    "${PROJECT_DOCKERFILE} already exists. Something may be wrong. Aborting"
-require_not_exist ${PROJECT_COMPOSE_FILE}  "${PROJECT_COMPOSE_FILE} already exists. Something may be wrong. Aborting"
+require_exist     "${PROJECT_ROOT}"          "${PROJECT_ROOT} does not exist. You must check out your app's project dir to run $0"
+require_not_exist "${PROJECT_DX_DIR}"        "Dockbox is already installed in ${PROJECT_ROOT}, since it has a dx/ directory"
+require_not_exist "${PROJECT_DOCKERFILE}"    "${PROJECT_DOCKERFILE} already exists. Something may be wrong. Aborting"
+require_not_exist "${PROJECT_COMPOSE_FILE}"  "${PROJECT_COMPOSE_FILE} already exists. Something may be wrong. Aborting"
 
 main() {
   intro
@@ -41,7 +41,7 @@ main() {
 intro() {
   log "📝" "Dockbox will collect some information from you, then copy its files to your app's source directory.It will also initialize a configuration file and, if you have a .gitignore, add a few lines to it You can use your source code control system to inspect what it did before accepting the changes"
   log "📝" "Hit return to begin"
-  read IGNORED
+  read -r IGNORED
 }
 
 collect_info() {
@@ -49,13 +49,13 @@ collect_info() {
   log "1️⃣ " "Collecting Information"
   log
 
-  PROJECT_NAME_GUESS=$(basename ${PROJECT_ROOT})
-  user_input "📊" "What is your project's name, in letters and dashes only?" ${PROJECT_NAME_GUESS}
-  PROJECT_NAME=${INPUT}
+  PROJECT_NAME_GUESS=$(basename "${PROJECT_ROOT}")
+  user_input "📊" "What is your project's name, in letters and dashes only?" "${PROJECT_NAME_GUESS}"
+  PROJECT_NAME="${INPUT}"
   user_input "🏢" "What is your GitHub or DockerHub org name?"
-  ORG_NAME=${INPUT}
+  ORG_NAME="${INPUT}"
   user_input "🏷 " "What tag would you like to use? Dockbox recommends something meaningful for tool versions and not the version of your app"
-  TAG=${INPUT}
+  TAG="${INPUT}"
 }
 
 copy_files() {
@@ -64,9 +64,9 @@ copy_files() {
   log
 
   log "📂" "Creating ${PROJECT_DX_DIR}"
-  mkdir ${PROJECT_DX_DIR}
+  mkdir "${PROJECT_DX_DIR}"
 
-  for file in ${DX_SCRIPTS_DIR}/* ${SCRIPT_DIR}/setupkit.sh.lib; do
+  for file in "${DX_SCRIPTS_DIR}"/* "${SCRIPT_DIR}"/setupkit.sh.lib; do
     log "🖨" "Copying ${file} to ${PROJECT_DX_DIR}"
     cp ${file} ${PROJECT_DX_DIR}
   done
@@ -123,7 +123,7 @@ create_config() {
     log
     log "🧼" "Hit return to continue"
 
-    read IGNORE
+    read -r IGNORE
 
   fi
 }

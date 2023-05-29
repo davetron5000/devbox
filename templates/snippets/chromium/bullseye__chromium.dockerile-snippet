@@ -1,0 +1,4 @@
+# dx.source=https://packages.debian.org/bullseye/chromium-driver
+# dx.stability=debian
+RUN apt-get -y install chromium chromium-driver
+# vim: ft=Dockerfile
