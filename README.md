@@ -16,10 +16,32 @@ OR
 
 ## Setup
 
+### Install in the App
+
 To add Dockbox to your app, or to create a new app that will use Dockbox:
 
 1. `cd` to wherever you downloaded Dockbox
-1. `bin/init`
+1. `bin/install «options» «snippets and services»`
+
+   Options:
+
+   * `-a «path to your app»` where your app is or will be. This will be created if needed.
+   * `-i «base image»` the base image of your app's dev container. Figuring this out is not necessarily
+     that easy
+   * `-o «org name»` your org on Dockerhub or GitHub. This is used for making local images for your dev container
+   * `-p «project name»` optionaly to specify the name of the project. If omitted, the basename you gave to `-a` is used.
+   * `-t «tag»` a Docker tag for your devcontainer image.  Ideally this is something related to your language or framework runtime
+   requirements and not a version of your app itself. If omitted will be based on the value you gave to `-i`.
+
+   Snippets and Services:
+
+   Using tab-completion, complete any files inside `templates/snippets` for things to add to your Dockerfile or `templates/services`
+   for services your app needs to run in dev e.g. postgres
+
+### Per-developer setup
+
+Each developer will need a small amount of configuration based on their computer's architecutre.  They should run `dx/setup` the first
+time they check out the codebase.
 
 ## Usage
 
