@@ -12,6 +12,11 @@ ensure_docker_compose_env
 
 log "🚀" "Starting docker-compose.dx.yml"
 
-docker compose -f docker-compose.dx.yml -p "${PROJECT_NAME}" --env-file "${ENV_FILE}" up --build --timestamps --force-recreate
+BUILD=--build
+if [ "${1}" == "--no-build" ]; then
+    BUILD=
+fi
+
+docker compose -f docker-compose.dx.yml -p "${PROJECT_NAME}" --env-file "${ENV_FILE}" up ${BUILD} --timestamps --force-recreate
 
 # vim: ft=bash

@@ -21,9 +21,7 @@ while [ -z "${DOCKER_DEFAULT_PLATFORM}" ]; do
   fi
 
 
-  log "💾" "DockBox needs to know your 'Docker Platform' so it can pull images"
-  log "💾" "compatible with your computer."
-  user_input "💾" "Enter your platform or type 'help' to get help on choosing" "${PLATFORM_GUESS}"
+  user_input "💾" "Enter your 'Docker Platform' or type 'help' to get help on choosing" "${PLATFORM_GUESS}"
   DOCKER_DEFAULT_PLATFORM="${INPUT}"
   if [ "${DOCKER_DEFAULT_PLATFORM}" = "help" ]; then
     log
