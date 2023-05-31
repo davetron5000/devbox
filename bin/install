@@ -1,0 +1,258 @@
+#!/bin/bash
+
+set -e
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${0}" )" > /dev/null 2>&1 && pwd )
+LOCAL_DX_SCRIPTS_DIR=$(realpath "${SCRIPT_DIR}"/../dx-scripts)
+
+. "${LOCAL_DX_SCRIPTS_DIR}/setupkit.sh.lib"
+
+DX_RELATIVE_DIR=dx
+COMPOSE_TEMPLATE=$(realpath "${SCRIPT_DIR}"/../templates/docker-compose.template.yml)
+COMPOSE_ENV_TEMPLATE=$(realpath "${SCRIPT_DIR}"/../templates/docker-compose.template.env)
+
+
+main() {
+  PROJECT_ROOT=
+  BASE_IMAGE=
+  PROJECT_NAME=
+  ORG=
+  TAG=
+  args=()
+  snippets=()
+  services=()
+  parse_command_line "${@}"
+
+  PROJECT_DX_DIR="${PROJECT_ROOT}"/"${DX_RELATIVE_DIR}"
+  PROJECT_DOCKERFILE="${PROJECT_ROOT}"/Dockerfile.dx
+  PROJECT_COMPOSE_FILE="${PROJECT_ROOT}"/docker-compose.dx.yml
+  PROJECT_COMPOSE_ENV="${PROJECT_DX_DIR}"/docker-compose.base.env
+
+  setup_project_dir_if_needed
+  parse_services_and_snippets "${args[@]}"
+  create_dockerfile "${PROJECT_DOCKERFILE}" "${BASE_IMAGE}" "${snippets[@]}"
+  create_docker_compose "${PROJECT_COMPOSE_FILE}" "${COMPOSE_TEMPLATE}" "${services[@]}"
+  copy_dx_scripts "${LOCAL_DX_SCRIPTS_DIR}" "${PROJECT_DX_DIR}"
+  create_docker_compose_env "${COMPOSE_ENV_TEMPLATE}" "${PROJECT_COMPOSE_ENV}" "${PROJECT_NAME}" "${ORG}" "${TAG}"
+}
+
+setup_project_dir_if_needed() {
+  if [ ! -d "${PROJECT_ROOT}" ]; then
+    log "📁" "Creating project root at '${PROJECT_ROOT}'"
+    mkdir -p "${PROJECT_ROOT}"
+  else
+    log "✅" "Project root already exists at '${PROJECT_ROOT}'"
+  fi
+
+  require_not_exist "${PROJECT_DX_DIR}"        "Dockbox is already installed in ${PROJECT_ROOT}, since it has a dx/ directory"
+  require_not_exist "${PROJECT_DOCKERFILE}"    "${PROJECT_DOCKERFILE} already exists. Something may be wrong. Aborting"
+  require_not_exist "${PROJECT_COMPOSE_FILE}"  "${PROJECT_COMPOSE_FILE} already exists. Something may be wrong. Aborting"
+
+}
+
+parse_services_and_snippets() {
+  unknown=()
+
+  is_snippet=*.dockerfile-snippet
+  is_service=*.docker-compose-service.yml
+
+  for file in "${@}"; do
+    case "$file" in
+      $is_snippet)
+        snippets+=("$file")
+        ;;
+      $is_service)
+        services+=("$file")
+        ;;
+      *)
+        unknown+=("$file")
+        ;;
+    esac
+  done
+  if [ "${#unknown[@]}" -gt 0 ]; then
+    fatal "Some files are not Dockerfile snippets nor Docker Compose services: ${unknown[@]}"
+  fi
+}
+
+create_dockerfile() {
+  dockerfile="$1"
+  base_image_name="$2"
+  snippets=("${@:3}")
+  log "🐳" "Making the Dockerfile ${dockerfile} with base image ${base_image_name}"
+
+  echo "FROM ${base_image_name}" > "${dockerfile}"
+  {
+    echo
+    echo "ENV DEBIAN_FRONTEND noninteractive"
+    echo "RUN apt-get -y update"
+    echo
+  } >> "${dockerfile}"
+
+  for snippet in "${snippets[@]}"; do
+    log "🧩" "Adding snippet ${snippet}"
+    {
+      echo
+      echo "# dx.snippet.start=${snippet}"
+      grep -v "^# vim:" "${snippet}" | \
+        sed "s/# dx.source=/# Based on documentation at /g" | \
+        sed "s/# dx.stability=vendor/# based on the vendor's documentation/g" | \
+        sed "s/# dx.stability=debian/# based on Debian's packaging/g" | \
+        sed "s/# dx.stability=/# stable based on /g"
+      echo "# dx.snippet.end=${snippet}"
+      echo
+    } >> "${dockerfile}"
+  done
+
+  {
+    echo "# This entrypoint produces a nice help message and waits around for you to do"
+    echo "# something with the container."
+    echo "COPY ${DX_RELATIVE_DIR}/show-help-in-app-container-then-wait.sh /root"
+  } >> ${dockerfile}
+  log "✅" "${dockerfile} created"
+}
+
+create_docker_compose() {
+  compose_file="$1"
+  template="$2"
+  services=("${@:3}")
+
+  log "🐋" "Making ${compose_file}"
+
+  cp "${template}" "${compose_file}"
+
+  for service in "${services[@]}"; do
+    log "🖥️" "Adding service ${service}"
+    {
+      echo
+      echo "# dx.service.start=${service}"
+      grep -v "^# vim:" "${service}" | \
+        sed "s/# dx.source=/# Based on documentation at /g" | \
+        sed "s/# dx.stability=vendor/# managed by the vendor/g" | \
+        sed "s/# dx.stability=docker/# managed by Docker/g" | \
+        sed "s/# dx.stability=/# managed by /g"
+      echo "# dx.service.end=${service}"
+      echo
+    } >> "${compose_file}"
+  done
+
+  log "✅" "${compose_file} created"
+}
+
+create_docker_compose_env() {
+  compose_env_template="$1"
+  project_compose_env="$2"
+  project_name="$3"
+  org="$4"
+  tag="$5"
+
+  image_name="${org}/${project_name}:${tag}"
+
+  log "🎚️" "Initializing ${project_compose_env}"
+  sed "s^%%PROJECT_NAME%%^${project_name}^g" "${compose_env_template}" | sed "s^%%IMAGE%%^${image_name}^g" > "${project_compose_env}"
+  log "✅" "${project_compose_env} is ready"
+}
+
+
+copy_dx_scripts() {
+  dx_scripts="$1"
+  project_dx_dir="$2"
+
+  log "🗃️" "Copying dx scripts to ${project_dx_dir}"
+  mkdir -p "${project_dx_dir}"
+  cp "${dx_scripts}"/* "${project_dx_dir}"
+  log "✅" "${project_dx_dir} is ready"
+}
+
+parse_command_line() {
+  while getopts "hp:o:t:i:a:" opt "${@}"; do
+    case ${opt} in
+      h )
+        usage "DETAILED"
+        ;;
+      a )
+        PROJECT_ROOT="${OPTARG}"
+        ;;
+      i )
+        BASE_IMAGE="${OPTARG}"
+        ;;
+      p )
+        PROJECT_NAME="${OPTARG}"
+        ;;
+      o )
+        ORG="${OPTARG}"
+        ;;
+      t )
+        TAG="${OPTARG}"
+        ;;
+      \? )
+        usage "Unknown option: ${OPTARG}"
+        ;;
+      : )
+        usage "Invalid option: ${OPTARG} requires an argument"
+        ;;
+    esac
+  done
+
+  shift $((OPTIND -1))
+
+  if [ -z "${ORG}" ]; then
+    usage "You must supply an org with -o"
+  fi
+
+  if [ -z "${PROJECT_ROOT}" ]; then
+    usage "You must supply the path to your app's root"
+  fi
+
+  if [ -z "${BASE_IMAGE}" ]; then
+    usage "You must supply the base image to use"
+  fi
+
+  if [ -z "${PROJECT_NAME}" ]; then
+    PROJECT_NAME=$(basename "${PROJECT_ROOT}")
+    log "🧐" "Assuming project name is '${PROJECT_NAME}' - use -p to this script if you want to do something else"
+  fi
+  if [ -z "${TAG}" ]; then
+    TAG=$(echo ${BASE_IMAGE} | sed 's/:/-/g')
+    log "🧐" "Assuming tag is '${TAG}' - use -t to this script if you want to do something else"
+  fi
+  args=("${@}")
+}
+
+usage() {
+  error_message=$1
+  if [ -n "${error_message}" ]; then
+    if [ "${error_message}" != "DETAILED" ]; then
+      echo "${error_message}"
+      echo
+    fi
+  fi
+  echo "usage: $0 [-h] [-p project_name] [-o org] [-t tag] [-a path_to_app] [-i base_image] [snippets and services]"
+  if [ -n "${error_message}" ]; then
+    if [ "${error_message}" = "DETAILED" ]; then
+      echo
+      echo "DESCRIPTION"
+      echo
+      echo "    Initializes your project with Dockbox. This will create a Dockerfile and"
+      echo "    a Docker Compose file to run your project"
+      echo
+      echo "OPTIONS"
+      echo
+      echo "    -h - show this help"
+      echo "    -a - path to your app - will be created if not present (required)"
+      echo "    -i - base image to use for Dockerfile (required)"
+      echo "    -o - the name of your project's org on DockerHub (or GitHub)"
+      echo "    -p - the name of your project. Defaults to the name of the directory for path_to_app"
+      echo "    -t - a tag to use for your development container.  Defaults to the base_image name"
+      echo
+      echo "    snippets and services - any number of files containing snippets or services to include in your project. The"
+      echo "                            snippets will be added to the Dockerfile in the order given.  The services"
+      echo "                            will be added to the Docker Compose file"
+    fi
+  fi
+  exit 1
+}
+
+
+main "${@}"
+
+# vim: ft=bash

@@ -92,4 +92,19 @@ user_confirm() {
   user_input "$1" "$2" "$3" "y/n> "
 }
 
+require_not_exist() {
+  file=$1
+  message=$2
+  if [ -e "${file}" ]; then
+    fatal "$message"
+  fi
+}
+require_exist() {
+  file=$1
+  message=$2
+  if [ ! -e "${file}" ]; then
+    fatal "$message"
+  fi
+}
+
 # vim: ft=bash
