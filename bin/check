@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+
+echo "[ $0 ] Checking bin/"
+shellcheck -x -P dx-scripts bin/*
+echo "[ $0 ] Checking dx-scripts/"
+shellcheck -x -P dx-scripts dx-scripts/*

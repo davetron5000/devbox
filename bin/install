@@ -53,10 +53,13 @@ setup_project_dir_if_needed() {
 parse_services_and_snippets() {
   unknown=()
 
+  # shellcheck disable=SC2125
   is_snippet=*.dockerfile-snippet
+  # shellcheck disable=SC2125
   is_service=*.docker-compose-service.yml
 
   for file in "${@}"; do
+    # shellcheck disable=SC2254
     case "$file" in
       $is_snippet)
         snippets+=("$file")
@@ -70,7 +73,7 @@ parse_services_and_snippets() {
     esac
   done
   if [ "${#unknown[@]}" -gt 0 ]; then
-    fatal "Some files are not Dockerfile snippets nor Docker Compose services: ${unknown[@]}"
+    fatal "Some files are not Dockerfile snippets nor Docker Compose services: ${unknown[*]}"
   fi
 }
 
@@ -107,7 +110,7 @@ create_dockerfile() {
     echo "# This entrypoint produces a nice help message and waits around for you to do"
     echo "# something with the container."
     echo "COPY ${DX_RELATIVE_DIR}/show-help-in-app-container-then-wait.sh /root"
-  } >> ${dockerfile}
+  } >> "${dockerfile}"
   log "✅" "${dockerfile} created"
 }
 
@@ -212,7 +215,7 @@ parse_command_line() {
     log "🧐" "Assuming project name is '${PROJECT_NAME}' - use -p to this script if you want to do something else"
   fi
   if [ -z "${TAG}" ]; then
-    TAG=$(echo ${BASE_IMAGE} | sed 's/:/-/g')
+    TAG=${BASE_IMAGE//:/-/g}
     log "🧐" "Assuming tag is '${TAG}' - use -t to this script if you want to do something else"
   fi
   args=("${@}")
