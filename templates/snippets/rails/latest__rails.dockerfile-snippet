@@ -1,0 +1,6 @@
+# dx.source=https://guides.rubyonrails.org/getting_started.html#creating-a-new-rails-project-installing-rails-installing-rails
+# dx.stability=vendor
+ENV BINDING=0.0.0.0
+RUN gem install rails
+
+# vim: ft=Dockerfile
