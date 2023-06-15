@@ -172,9 +172,13 @@ create_docker_compose_env() {
     touch "${project_git_ignore}"
   fi
 
-  project_root=$(realpath $(dirname "${project_git_ignore}"))
-  local_compose_env=$(realpath --relative-to="${project_root}" "${project_compose_env%.base.env}".local.env)
-  compose_env=$(realpath --relative-to="${project_root}" "${project_compose_env%.base.env}".env)
+  project_root_relative=$(dirname "${project_git_ignore}")
+  project_root=$(realpath "${project_root_relative}")
+  project_compose_env_realpath=$(realpath "${project_compose_env}")
+  project_compose_env_relative=${project_compose_env_realpath//"${project_root}"\//}
+  project_compose_env_relative_basename="${project_compose_env_relative%.base.env}".local.env
+  local_compose_env=${project_compose_env_relative_basename}.local.env
+  compose_env=${project_compose_env_relative_basename}.env
 
   echo "🙈" "Adding files to ${project_git_ignore} that should not be checked in"
   {
@@ -199,7 +203,7 @@ copy_dx_scripts() {
 }
 
 parse_command_line() {
-  while getopts "hp:o:t:i:a:" opt "${@}"; do
+  while getopts "hp:o:t:i:a:n:" opt "${@}"; do
     case ${opt} in
       h )
         usage "DETAILED"
