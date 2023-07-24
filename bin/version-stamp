@@ -1,0 +1,40 @@
+#!/bin/bash
+
+set -e
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${0}" )" > /dev/null 2>&1 && pwd )
+LOCAL_DX_SCRIPTS_DIR=$(realpath "${SCRIPT_DIR}"/../dx-scripts)
+
+. "${LOCAL_DX_SCRIPTS_DIR}/setupkit.sh.lib"
+
+existing_versions=()
+for file in "${LOCAL_DX_SCRIPTS_DIR}"/* ; do
+  existing_version=$(grep '^# DX_VERSION:' "${file}" | sed 's%# DX_VERSION: %%')
+  file_relative=${file#"${LOCAL_DX_SCRIPTS_DIR}"/}
+  if [ -z "${existing_version}" ]; then
+    log "❓" "${file_relative} has no version"
+  else
+    log "✅" "${file_relative} has version ${existing_version}"
+    existing_versions+=("${existing_version}")
+  fi
+done
+highest_version=0
+for version in "${existing_versions[@]}"; do
+  if [ "${version}" -gt "${highest_version}" ]; then
+    highest_version=$version
+  fi
+done
+log "⬆️", "Highest version is ${highest_version}"
+next_version=$((highest_version + 1))
+user_input "⏭️", "Next version for all files will be ${next_version}" "n" "OK to proceed? (y/n)"
+if [ "${INPUT}" != "y" ]; then
+  log "🛑" "No changes made"
+  exit 1
+fi
+for file in "${LOCAL_DX_SCRIPTS_DIR}"/* ; do
+  log "👊" "Setting version to ${next_version} for ${file}"
+  tmpfile=/tmp/"$$"
+  grep -v "^# DX_VERSION:" "${file}"> "${tmpfile}"
+  echo "# DX_VERSION: ${next_version}" >> "${tmpfile}"
+  mv "${tmpfile}" "${file}"
+done

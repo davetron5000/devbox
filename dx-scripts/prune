@@ -4,8 +4,8 @@ set -e
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${0}" )" > /dev/null 2>&1 && pwd )
 
-. "${SCRIPT_DIR}/setupkit.sh.lib"
 . "${SCRIPT_DIR}/dx.sh.lib"
+require_command "docker"
 
 usage_on_help "Prune containers for this repo" "command" "${@}"
 ensure_docker_compose_env
@@ -17,3 +17,4 @@ done
 echo "🧼" "Containers removed"
 
 # vim: ft=bash
+# DX_VERSION: 6

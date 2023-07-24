@@ -36,3 +36,4 @@ PROMPT
 #
 # @see https://stackoverflow.com/a/41655546
 sleep infinity
+# DX_VERSION: 6

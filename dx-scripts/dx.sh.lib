@@ -1,4 +1,10 @@
 # shellcheck shell=bash
+
+. "${SCRIPT_DIR}/setupkit.sh.lib"
+
+require_command "realpath"
+require_command "catx"
+
 ENV_FILE=$(realpath "${SCRIPT_DIR}")/docker-compose.env
 BASE_ENV_FILE=$(realpath "${SCRIPT_DIR}")/docker-compose.base.env
 LOCAL_ENV_FILE=$(realpath "${SCRIPT_DIR}")/docker-compose.local.env
@@ -31,3 +37,4 @@ ensure_docker_compose_env() {
   . "${ENV_FILE}"
 }
 # vim: ft=bash
+# DX_VERSION: 6
