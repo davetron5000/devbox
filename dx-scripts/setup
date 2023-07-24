@@ -55,4 +55,3 @@ ensure_docker_compose_env
 
 log "🎉" "You are all set up. Try dx/build or dx/start"
 # vim: ft=bash
-# DX_VERSION: 6

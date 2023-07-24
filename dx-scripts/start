@@ -20,4 +20,3 @@ fi
 docker compose -f docker-compose.dx.yml -p "${PROJECT_NAME}" --env-file "${ENV_FILE}" up ${BUILD} --timestamps --force-recreate
 
 # vim: ft=bash
-# DX_VERSION: 6

@@ -17,4 +17,3 @@ export DOCKER_DEFAULT_PLATFORM
 docker compose -f docker-compose.dx.yml -p "${PROJECT_NAME}" --env-file "${ENV_FILE}" down -v
 
 # vim: ft=bash
-# DX_VERSION: 6

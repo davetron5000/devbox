@@ -115,4 +115,3 @@ require_command() {
 }
 
 # vim: ft=bash
-# DX_VERSION: 6

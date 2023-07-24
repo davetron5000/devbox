@@ -17,4 +17,3 @@ done
 echo "🧼" "Containers removed"
 
 # vim: ft=bash
-# DX_VERSION: 6

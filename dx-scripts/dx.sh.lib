@@ -37,4 +37,3 @@ ensure_docker_compose_env() {
   . "${ENV_FILE}"
 }
 # vim: ft=bash
-# DX_VERSION: 6
