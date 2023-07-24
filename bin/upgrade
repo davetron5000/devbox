@@ -1,0 +1,84 @@
+#!/bin/bash
+
+set -e
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${0}" )" > /dev/null 2>&1 && pwd )
+LOCAL_DX_SCRIPTS_DIR=$(realpath "${SCRIPT_DIR}"/../dx-scripts)
+
+. "${LOCAL_DX_SCRIPTS_DIR}/setupkit.sh.lib"
+
+DX_RELATIVE_DIR=dx
+
+main() {
+  PROJECT_ROOT=
+  parse_command_line "${@}"
+
+  PROJECT_DX_DIR="${PROJECT_ROOT}"/"${DX_RELATIVE_DIR}"
+  for file in "${LOCAL_DX_SCRIPTS_DIR}"/*; do
+    destination_file="${PROJECT_DX_DIR}/$(basename "${file}")"
+    if [ -e "${destination_file}" ]; then
+      log "📝" "Replacing ${destination_file}"
+    else
+      log "👶" "Creating ${destination_file}"
+    fi
+    cp "${file}" "${destination_file}"
+  done
+}
+
+parse_command_line() {
+  while getopts "ha:" opt "${@}"; do
+    case ${opt} in
+      h )
+        usage "DETAILED"
+        ;;
+      a )
+        PROJECT_ROOT="${OPTARG}"
+        ;;
+      \? )
+        usage "Unknown option: ${OPTARG}"
+        ;;
+      : )
+        usage "Invalid option: ${OPTARG} requires an argument"
+        ;;
+    esac
+  done
+
+  shift $((OPTIND -1))
+
+  if [ -z "${PROJECT_ROOT}" ]; then
+    usage "You must supply the path to your app's root"
+  fi
+
+  # args=("${@}")
+}
+
+usage() {
+  error_message=$1
+  if [ -n "${error_message}" ]; then
+    if [ "${error_message}" != "DETAILED" ]; then
+      echo "${error_message}"
+      echo
+    fi
+  fi
+  echo "usage: $0 [-h] [-p project_name]"
+  if [ -n "${error_message}" ]; then
+    if [ "${error_message}" = "DETAILED" ]; then
+      echo
+      echo "DESCRIPTION"
+      echo
+      echo "    Upgrades Dockbox files.  This will overwrite files in your project"
+      echo "    that Dockbox is assuming it is managing"
+      echo
+      echo "OPTIONS"
+      echo
+      echo "    -h - show this help"
+      echo "    -a - path to your app"
+      echo
+    fi
+  fi
+  exit 1
+}
+
+main "${@}"
+
+# vim: ft=bash
