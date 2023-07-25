@@ -21,7 +21,7 @@ main() {
     else
       log "👶" "Creating ${destination_file}"
     fi
-    cp "${file}" "${destination_file}"
+    cp -p "${file}" "${destination_file}"
   done
 }
 
