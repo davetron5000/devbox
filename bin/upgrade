@@ -60,7 +60,7 @@ usage() {
       echo
     fi
   fi
-  echo "usage: $0 [-h] [-p project_name]"
+  echo "usage: $0 [-h] [-a path_to_app]"
   if [ -n "${error_message}" ]; then
     if [ "${error_message}" = "DETAILED" ]; then
       echo
