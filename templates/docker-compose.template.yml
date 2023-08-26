@@ -1,9 +1,6 @@
 services:
   app:
     image: ${IMAGE}
-    build:
-      context: "./"
-      dockerfile: "Dockerfile.dx"
     platform: ${DOCKER_DEFAULT_PLATFORM}
     pull_policy: "missing"
     init: true
