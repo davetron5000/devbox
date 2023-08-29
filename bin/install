@@ -176,7 +176,7 @@ create_docker_compose_env() {
   project_root=$(realpath "${project_root_relative}")
   project_compose_env_realpath=$(realpath "${project_compose_env}")
   project_compose_env_relative=${project_compose_env_realpath//"${project_root}"\//}
-  project_compose_env_relative_basename="${project_compose_env_relative%.base.env}".local.env
+  project_compose_env_relative_basename="${project_compose_env_relative%.base.env}"
   local_compose_env=${project_compose_env_relative_basename}.local.env
   compose_env=${project_compose_env_relative_basename}.env
 
