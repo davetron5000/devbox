@@ -3,7 +3,6 @@
   mailcatcher:
     image: sj26/mailcatcher:v0.8.2
     pull_policy: "missing"
-    platform: ${DOCKER_DEFAULT_PLATFORM}
     ports:
       - "11080:1080"
     expose:

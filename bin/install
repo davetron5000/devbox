@@ -27,7 +27,7 @@ main() {
   PROJECT_DX_DIR="${PROJECT_ROOT}"/"${DX_RELATIVE_DIR}"
   PROJECT_DOCKERFILE="${PROJECT_ROOT}"/Dockerfile.dx
   PROJECT_COMPOSE_FILE="${PROJECT_ROOT}"/docker-compose.dx.yml
-  PROJECT_COMPOSE_ENV="${PROJECT_DX_DIR}"/docker-compose.base.env
+  PROJECT_COMPOSE_ENV="${PROJECT_DX_DIR}"/docker-compose.env
   PROJECT_GIT_IGNORE="${PROJECT_ROOT}"/.gitignore
 
   setup_project_dir_if_needed

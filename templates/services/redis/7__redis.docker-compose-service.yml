@@ -2,6 +2,5 @@
 # dx.stability=vendor
   redis:
     image: redis:6
-    platform: ${DOCKER_DEFAULT_PLATFORM}
     pull_policy: "missing"
 # vim: ft=yaml nospell
