@@ -1,0 +1,68 @@
+:root {
+  --mg-ff-sansx: Avenir, Montserrat, Corbel, 'URW Gothic', source-sans-pro, sans-serif;
+  --mg-ff-serif: Didot, 'Bodoni MT', 'Noto Serif Display', 'URW Palladio L', P052, Sylfaen, serif;
+  --mg-ff-sans: ui-rounded, 'Hiragino Maru Gothic ProN', Quicksand, Comfortaa, Manjari, 'Arial Rounded MT', 'Arial Rounded MT Bold', Calibri, source-sans-pro, sans-serif;
+}
+/*
+https://ghola.dev/?numColors=6&colorHex=%237c7196&secondaryColorHex=%23c8ae00&numShades=7&scaleModel=EnsureContrast&colorWheel=HandCrafted&showColorDetails=false&showContrastInfo=true&bigSwatches=true&secondaryColorChecked=false
+ */
+
+:root {
+
+
+  --mg-red-darkest: #291302; /* Kilamanjaro */
+  --mg-red-darker: #372116; /* Tamarind */
+  --mg-red-dark: #685146; /* Kabul */
+  --mg-red: #967d71; /* Almond Frost */
+  --mg-red-light: #dec5b9; /* Bone */
+  --mg-red-lighter: #f3dace; /* Albescent White */
+  --mg-red-lightest: #fffaee; /* Island Spice */
+
+  --mg-orange-darkest: #2a1f04; /* Jacko Bean */
+  --mg-orange-darker: #382d16; /* Mikado */
+  --mg-orange-dark: #685d46; /* Tobacco Brown */
+  --mg-orange: #968a71; /* Arrowtown */
+  --mg-orange-light: #ded2b9; /* Bone */
+  --mg-orange-lighter: #f3e7ce; /* Janna */
+  --mg-orange-lightest: #fffee5; /* Chilean Heath */
+
+  --mg-yellow-darkest: #222a04; /* Pine Tree */
+  --mg-yellow-darker: #2e3613; /* Woodrush */
+  --mg-yellow-dark: #606845; /* Finch */
+  --mg-yellow: #8e9671; /* Avocado */
+  --mg-yellow-light: #d9e1bc; /* Beryl Green */
+  --mg-yellow-lighter: #ebf3ce; /* Tahuna Sands */
+  --mg-yellow-lightest: #fbffde; /* Spring Sun */
+
+  --mg-green-darkest: #042820; /* Tiber */
+  --mg-green-darker: #13362e; /* Gable Green */
+  --mg-green-dark: #456860; /* Mineral Green */
+  --mg-green: #71968d; /* Juniper */
+  --mg-green-light: #bce1d8; /* Skeptic */
+  --mg-green-lighter: #d1f6ed; /* Mint Tulip */
+  --mg-green-lightest: #e2fffe; /* Baby Blue */
+
+  --mg-blue-darkest: #171329; /* Mirage */
+  --mg-blue-darker: #262139; /* Steel Gray */
+  --mg-blue-dark: #342f47; /* Martinique */
+  --mg-blue: #7c7196; /* Rum */
+  --mg-blue-light: #dfd4f9; /* Moon Raker */
+  --mg-blue-lighter: #f4e9ff; /* Blue Chalk */
+  --mg-blue-lightest: #fffbff; /* Tutu */
+
+  --mg-purple-darkest: #270316; /* Jacaranda */
+  --mg-purple-darker: #371526; /* Tamarind */
+  --mg-purple-dark: #684556; /* Eggplant */
+  --mg-purple: #967182; /* Mountbatten Pink */
+  --mg-purple-light: #deb9ca; /* Pink Flare */
+  --mg-purple-lighter: #f6d1e2; /* Cherub */
+  --mg-purple-lightest: #fff5ff; /* Tutu */
+
+  --mg-gray-darkest: #0b0b0b; /* Cod Gray */
+  --mg-gray-darker: #1b1b1b; /* Cod Gray */
+  --mg-gray-dark: #4b4b4b; /* Tundora */
+  --mg-gray: #777777; /* Boulder */
+  --mg-gray-light: #bfbfbf; /* Silver */
+  --mg-gray-lighter: #d4d4d4; /* Alto */
+  --mg-gray-lightest: #ffffff; /* White */
+}
