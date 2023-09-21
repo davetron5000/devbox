@@ -1,6 +1,6 @@
 # dx.source=https://redis.io/download/#redis-downloads
 # dx.stability=vendor
   redis:
-    image: redis:6
+    image: redis:7
     pull_policy: "missing"
 # vim: ft=yaml nospell
