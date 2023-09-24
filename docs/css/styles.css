@@ -33,3 +33,15 @@ input:focus, button:focus {
 input.bg-white:focus {
   background-color: var(--mg-white-ish);
 }
+
+.bg-purple-lightest-gradient {
+  background: linear-gradient(var(--mg-purple-lightest),var(--mg-white-ish));
+}
+.bg-purple-darkest-gradient {
+  background: linear-gradient(var(--mg-purple-darkest),var(--mg-purple-darker));
+}
+
+svg.purple-dark {
+  stroke: var(--mg-purple-dark);
+  fill: var(--mg-purple-dark);
+}
