@@ -1,0 +1,8 @@
+# dx.source=https://hub.docker.com/_/postgres
+# dx.stability=docker
+  postgres:
+    image: postgres:16
+    pull_policy: "missing"
+    environment:
+      POSTGRES_PASSWORD: postgres
+# vim: ft=yaml nospell

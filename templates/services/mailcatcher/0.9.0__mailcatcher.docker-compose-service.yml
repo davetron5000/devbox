@@ -1,0 +1,10 @@
+# dx.source=https://github.com/sj26/mailcatcher/issues/363
+# dx.stability=vendor
+  mailcatcher:
+    image: sj26/mailcatcher:v0.9.0
+    pull_policy: "missing"
+    ports:
+      - "11080:1080"
+    expose:
+      - "1025"
+# vim: ft=yaml nospell
