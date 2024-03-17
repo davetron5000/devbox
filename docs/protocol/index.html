@@ -43,16 +43,16 @@
         Regardless of underlying technology, each dev environment should ideally provide a set of commands that, without the need for arguments, achieve common goals for doing development.
       </p>
       <p class="p mh-auto f-3">
-        There are two groups of scripts: those for using <em>during</em> development, and those for setting up and managing the dev environment itself.
+        There are two groups of scripts: those that setup the environment (which I call the <em>Foundational Core</em>) and those that are using during development (which I call the <em>Workspace</em>).
       </p>
     </section>
     <section class="bg-purple-lightest pv-4 ph-3" id="foundational">
       <h3 class="tc f-4 ttu fw-5 tracked">Foundational Core - Setting Up the Environment</h3>
       <p class="p mh-auto">
-        The dev environment itself should also be scripted, and this should be distinctly managed from dev tasks.  For example, the scripts to start/stop the dev environment itself should <strong>not</strong> be in <code>bin/</code>.
+        The dev environment itself should be scripted, and this should be distinctly managed from dev tasks.  For example, the scripts to start/stop the dev environment itself should <strong>not</strong> be in <code>bin/</code>.
       </p>
       <p class="p mh-auto">
-        <a href="/">DevBox</a> and “Sustainable Dev Environments with Docker and Bash” both prescribe the <code>dx/</code> directory to hold the scripts for managing the dev envrionment. These scripts support a common workflow for vituralized environments: build, start, execute tasks, shutdown:
+        “Sustainable Dev Environments with Docker and Bash” prescribes the <code>dx/</code> directory to hold the scripts for managing the dev envrionment. These scripts support a common workflow for vituralized environments: build, start, execute tasks, shutdown:
       </p>
       <figure class="w-100 w-50-ns ma-0 mh-auto" data-src="dev-env-protocol.dot">
         <div class="tc">
@@ -223,10 +223,10 @@
     <section class="bg-gray-lighter pv-4 ph-3" id="workspace">
       <h3 class="tc f-4 ttu fw-5 tracked">Workspace - During Development</h3>
       <p class="p mh-auto">
-        Once a dev environment is set up, these scripts will automate common tasks.  They are ideally managed <strong>as</strong> command-line scripts, as this affords the widest variety of integrations with other tools.
+        Once the Foundational Core (dev environment) is set up, the scripts in the Workspace will automate common tasks.  They are ideally managed <strong>as</strong> command-line scripts, as this affords the widest variety of integrations with other tools.
       </p>
       <p class="p mh-auto">
-        These support a common developer workflow of setup, iterate building &amp; running, then test:
+        These support a common developer workflow of setup, iterate building &amp; running, then test. Note that some frameworks (such as Ruby on Rails) provide scripts for you, and you should use those in lieu of these.
       </p>
       <figure class="mh-auto w-50-ns" data-src="workspace-protocol.dot">
         <div class="tc">
