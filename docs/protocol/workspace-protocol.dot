@@ -1,0 +1,44 @@
+digraph G {
+
+  rankdir="LR"
+  nodesep=0.55
+  compound=true
+  node[shape=box fontname=avenir]
+
+  Setup[label=<
+    <FONT face="avenir">Setup</FONT>
+    <br/>
+    <FONT face="courier">bin/setup</FONT>
+  >]
+  Build[label=<
+    <FONT face="avenir">Build</FONT>
+    <br/>
+    <FONT face="courier">bin/build</FONT>
+  >]
+  Run[label=<
+    <FONT face="avenir">Run</FONT>
+    <br/>
+    <FONT face="courier">bin/run</FONT>
+  >]
+  Test[label=<
+    <FONT face="avenir">Test</FONT>
+    <br/>
+    <FONT face="courier">bin/ci</FONT>
+  >]
+  Setup -> Build
+  Build -> Run
+  Run   -> Build
+  Run   -> Test
+  subgraph cluster_dev {
+      label=<
+      <FONT face="avenir">Iterate</FONT>
+      <BR />
+      <FONT face="courier">bin/dev</FONT>
+      >
+      fontname="courier"
+      rankdir="TB"
+      Run
+      Build
+      { rank=same; Run; Build }
+  }
+}

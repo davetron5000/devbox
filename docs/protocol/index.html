@@ -46,62 +46,189 @@
         There are two groups of scripts: those for using <em>during</em> development, and those for setting up and managing the dev environment itself.
       </p>
     </section>
-    <section class="bg-gray-lighter pv-4 ph-3">
-      <h3 class="tc f-4 ttu fw-5 tracked">During Development</h3>
+    <section class="bg-purple-lightest pv-4 ph-3" id="foundational">
+      <h3 class="tc f-4 ttu fw-5 tracked">Foundational Core - Setting Up the Environment</h3>
+      <p class="p mh-auto">
+        The dev environment itself should also be scripted, and this should be distinctly managed from dev tasks.  For example, the scripts to start/stop the dev environment itself should <strong>not</strong> be in <code>bin/</code>.
+      </p>
+      <p class="p mh-auto">
+        <a href="/">DevBox</a> and “Sustainable Dev Environments with Docker and Bash” both prescribe the <code>dx/</code> directory to hold the scripts for managing the dev envrionment. These scripts support a common workflow for vituralized environments: build, start, execute tasks, shutdown:
+      </p>
+      <figure class="w-100 w-50-ns ma-0 mh-auto" data-src="dev-env-protocol.dot">
+        <div class="tc">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0.00 0.00 544.58 120.00">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 116)">
+<title>G</title>
+<polygon fill="transparent" stroke="transparent" points="-4,4 -4,-116 540.5796,-116 540.5796,4 -4,4"/>
+<!-- Shutdown -->
+<g id="node1" class="node">
+<title>Shutdown</title>
+<polygon fill="none" stroke="#000000" points="536.4697,-112 435.9097,-112 435.9097,-76 536.4697,-76 536.4697,-112"/>
+<text text-anchor="start" x="443.7998" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
+<text text-anchor="start" x="457.7998" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">Shutdown</text>
+<text text-anchor="start" x="514.5796" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
+<text text-anchor="start" x="446.2946" y="-82.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
+<text text-anchor="start" x="460.2946" y="-82.4" font-family="Courier,monospace" font-size="14.00" fill="#000000">dx/stop</text>
+<text text-anchor="start" x="519.0848" y="-82.4" font-family="avenir" font-size="14.00" fill="#000000">  </text>
+</g>
+<!-- Build -->
+<g id="node2" class="node">
+<title>Build</title>
+<polygon fill="none" stroke="#000000" points="104.2834,-112 -.0946,-112 -.0946,-76 104.2834,-76 104.2834,-112"/>
+<text text-anchor="start" x="22.5355" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
+<text text-anchor="start" x="36.5355" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">Build</text>
+<text text-anchor="start" x="67.6533" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
+<text text-anchor="start" x="8" y="-82.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
+<text text-anchor="start" x="22" y="-82.4" font-family="Courier,monospace" font-size="14.00" fill="#000000">dx/build</text>
+<text text-anchor="start" x="89.1888" y="-82.4" font-family="avenir" font-size="14.00" fill="#000000">  </text>
+</g>
+<!-- Start -->
+<g id="node3" class="node">
+<title>Start</title>
+<polygon fill="none" stroke="#000000" points="244.4722,-112 140.0942,-112 140.0942,-76 244.4722,-76 244.4722,-112"/>
+<text text-anchor="start" x="165.0637" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
+<text text-anchor="start" x="179.0637" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">Start</text>
+<text text-anchor="start" x="205.5027" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
+<text text-anchor="start" x="148.1888" y="-82.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
+<text text-anchor="start" x="162.1888" y="-82.4" font-family="Courier,monospace" font-size="14.00" fill="#000000">dx/start</text>
+<text text-anchor="start" x="229.3776" y="-82.4" font-family="avenir" font-size="14.00" fill="#000000">  </text>
+</g>
+<!-- Build&#45;&gt;Start -->
+<g id="edge1" class="edge">
+<title>Build-&gt;Start</title>
+<path fill="none" stroke="#000000" d="M104.2955,-94C112.5972,-94 121.2577,-94 129.7675,-94"/>
+<polygon fill="#000000" stroke="#000000" points="130.0385,-97.5001 140.0385,-94 130.0384,-90.5001 130.0385,-97.5001"/>
+</g>
+<!-- Exec -->
+<g id="node4" class="node">
+<title>Exec</title>
+<polygon fill="none" stroke="#000000" points="387.8791,-112 292.2983,-112 292.2983,-76 387.8791,-76 387.8791,-112"/>
+<text text-anchor="start" x="303.5452" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
+<text text-anchor="start" x="317.5452" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">Execute</text>
+<text text-anchor="start" x="362.6322" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
+<text text-anchor="start" x="300.1936" y="-82.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
+<text text-anchor="start" x="314.1936" y="-82.4" font-family="Courier,monospace" font-size="14.00" fill="#000000">dx/exec</text>
+<text text-anchor="start" x="372.9838" y="-82.4" font-family="avenir" font-size="14.00" fill="#000000">  </text>
+</g>
+<!-- Start&#45;&gt;Exec -->
+<g id="edge2" class="edge">
+<title>Start-&gt;Exec</title>
+<path fill="none" stroke="#000000" d="M244.3939,-94C256.4713,-94 269.4015,-94 281.7275,-94"/>
+<polygon fill="#000000" stroke="#000000" points="281.9074,-97.5001 291.9073,-94 281.9073,-90.5001 281.9074,-97.5001"/>
+</g>
+<!-- Exec&#45;&gt;Shutdown -->
+<g id="edge3" class="edge">
+<title>Exec-&gt;Shutdown</title>
+<path fill="none" stroke="#000000" d="M387.9276,-94C399.8907,-94 412.8819,-94 425.381,-94"/>
+<polygon fill="#000000" stroke="#000000" points="425.7311,-97.5001 435.731,-94 425.731,-90.5001 425.7311,-97.5001"/>
+</g>
+<!-- DevCommands -->
+<g id="node5" class="node">
+<title>DevCommands</title>
+<polygon fill="none" stroke="#000000" points="400.0116,-36 280.1658,-36 280.1658,0 400.0116,0 400.0116,-36"/>
+<text text-anchor="start" x="288.3776" y="-20.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
+<text text-anchor="start" x="302.3776" y="-20.4" font-family="avenir" font-size="14.00" fill="#000000">Development</text>
+<text text-anchor="start" x="377.7998" y="-20.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
+<text text-anchor="start" x="304.3929" y="-6.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
+<text text-anchor="start" x="318.3929" y="-6.4" font-family="Courier,monospace" font-size="14.00" fill="#000000">bin/\*</text>
+<text text-anchor="start" x="368.7845" y="-6.4" font-family="avenir" font-size="14.00" fill="#000000">  </text>
+</g>
+<!-- Exec&#45;&gt;DevCommands -->
+<g id="edge4" class="edge">
+<title>Exec-&gt;DevCommands</title>
+<path fill="none" stroke="#000000" stroke-dasharray="1,5" d="M340.0887,-75.9092C340.0887,-62.6426 340.0887,-49.376 340.0887,-36.1094"/>
+</g>
+</g>
+</svg>
+        </div>
+        <figcaption class="sr-only">
+          <p class="p mh-auto">
+            Diagram showing Build (<code>dx/build</code>) leading to Start (<code>dx/start</code>), leading to Execute (<code>dx/exec</code>). Execute connects to Development (this <code>bin/*</code> commands discussed above), but also leads to Shutdown (<code>dx/stop</code>)
+          </p>
+        </figcaption>
+      </figure>
+      <table class="mh-auto collapse w-auto">
+        <thead>
+          <tr>
+            <th class="tl va-top pa-2">
+              Command
+              <div class="dn-ns db fw-normal">Purpose</div>
+            </th>
+            <th class="tl va-top pa-2 dtc-ns dn">Purpose</th>
+            <th class="tl va-top pa-2">Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="pa-2 bt">
+              <code class="pa-2 br-2 bg-black purple-lighter">dx/build</code>
+              <p class="p db dn-ns">Build or download anything needed.</p>
+            </td>
+            <td class="pa-2 bt dtc-ns dn">
+              <p class="p">Build or download anything needed.</p>
+            </td>
+            <td class="pa-2 bt">
+              <p class="p">
+                The team should determine the cadence for running this command.  Everyone would naturally run it once to first set up their dev environment, however it may be desriable to run it many times per week to ensure any needed libraries or artifacts are up to date.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td class="pa-2 bt">
+              <code class="pa-2 br-2 bg-black purple-lighter">dx/start</code>
+              <p class="p db dn-ns">Start up the environment and services</p>
+            </td>
+            <td class="pa-2 bt dtc-ns dn">
+              <p class="p">Start up the environment and services</p>
+            </td>
+            <td class="pa-2 bt">
+              <p class="p">
+                This should do whatever is needed to start up the environment for the app, including any ancillary services like dev databases.  This would not necessarily handle app-specific initialization of the contents or behavior of the service. It would merely make them available.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td class="pa-2 bt">
+              <code class="dn dib-ns ws-nowrap pa-2 br-2 bg-black purple-lighter">dx/exec «command»</code>
+              <pre><code class="db dn-ns pa-2 br-2 bg-black purple-lighter">dx/exec \
+  «command»</code></pre>
+              <p class="p db dn-ns">Run a command in the dev environment</p>
+            </td>
+            <td class="pa-2 bt dtc-ns dn">
+              <p class="p">Run a command in the dev environment</p>
+            </td>
+            <td class="pa-2 bt">
+              <p class="p">
+                This assumes a virtualized environment where commands are run inside a container or virtual machine. If the dev environment is the local computer, this is not needed.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td class="pa-2 bt">
+              <code class="dib pa-2 br-2 bg-black purple-lighter">dx/stop</code>
+              <p class="p db dn-ns">Shutdown the environment</p>
+            </td>
+            <td class="pa-2 bt dtc-ns dn">
+              <p class="p">Shutdown the environment</p>
+            </td>
+            <td class="pa-2 bt">
+              <p class="p">
+                This powers down any services and virtualized environments.
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="bg-gray-lighter pv-4 ph-3" id="workspace">
+      <h3 class="tc f-4 ttu fw-5 tracked">Workspace - During Development</h3>
       <p class="p mh-auto">
         Once a dev environment is set up, these scripts will automate common tasks.  They are ideally managed <strong>as</strong> command-line scripts, as this affords the widest variety of integrations with other tools.
       </p>
       <p class="p mh-auto">
         These support a common developer workflow of setup, iterate building &amp; running, then test:
       </p>
-      <figure class="mh-auto w-50-ns">
-        <code class="dn">
-          <![CDATA[
-          digraph G {
-
-  rankdir="LR"
-  nodesep=0.55
-  compound=true
-  node[shape=box fontname=avenir]
-
-  Setup[label=<
-    <FONT face="avenir">Setup</FONT>
-    <br/>
-    <FONT face="courier">bin/setup</FONT>
-  >]
-  Build[label=<
-    <FONT face="avenir">Build</FONT>
-    <br/>
-    <FONT face="courier">bin/build</FONT>
-  >]
-  Run[label=<
-    <FONT face="avenir">Run</FONT>
-    <br/>
-    <FONT face="courier">bin/run</FONT>
-  >]
-  Test[label=<
-    <FONT face="avenir">Test</FONT>
-    <br/>
-    <FONT face="courier">bin/ci</FONT>
-  >]
-  Setup -> Build
-  Build -> Run
-  Run   -> Build
-  Run   -> Test
-  subgraph cluster_dev {
-      label=<
-      <FONT face="avenir">Iterate</FONT>
-      <BR />
-      <FONT face="courier">bin/dev</FONT>
-      >
-      fontname="courier"
-      rankdir="TB"
-      Run
-      Build
-      { rank=same; Run; Build }
-  }
-}
-]]></code>
+      <figure class="mh-auto w-50-ns" data-src="workspace-protocol.dot">
         <div class="tc">
           <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" viewBox="0.00 0.00 455.36 188.00">
             <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 184)">
@@ -301,220 +428,6 @@ bin/build &amp;
 bin/run &amp;
 wait</code></pre>
             </td></tr>
-        </tbody>
-      </table>
-    </section>
-    <section class="bg-purple-lightest pv-4 ph-3">
-      <h3 class="tc f-4 ttu fw-5 tracked">Setting Up the Environment</h3>
-      <p class="p mh-auto">
-        The dev environment itself should also be scripted, and this should be distinctly managed from dev tasks.  For example, the scripts to start/stop the dev environment itself should <strong>not</strong> be in <code>bin/</code>.
-      </p>
-      <p class="p mh-auto">
-        <a href="/">DevBox</a> and “Sustainable Dev Environments with Docker and Bash” both prescribe the <code>dx/</code> directory to hold the scripts for managing the dev envrionment. These scripts support a common workflow for vituralized environments: build, start, execute tasks, shutdown:
-      </p>
-      <figure class="w-100 w-50-ns ma-0 mh-auto">
-        <code class="dn">
-          <![CDATA[
-digraph G {
-
-  rankdir="LR"
-  nodesep=0.55
-  compound=true
-  
-  node[shape=box fontname=avenir]
-
-  Shutdown[label=<
-    <FONT face="avenir">Shutdown</FONT>
-    <br/>
-    <FONT face="courier">dx/stop</FONT>
-  >]
-  Build[label=<
-    <FONT face="avenir">Build</FONT>
-    <br/>
-    <FONT face="courier">dx/build</FONT>
-  >]
-  Start[label=<
-    <FONT face="avenir">Start</FONT>
-    <br/>
-    <FONT face="courier">dx/start</FONT>
-  >]
-  Exec[label=<
-    <FONT face="avenir">Execute</FONT>
-    <br/>
-    <FONT face="courier">dx/exec</FONT>
-  >]
-  DevCommands[label=<
-    <FONT face="avenir">Development</FONT>
-    <br/>
-    <FONT face="courier">bin/\*</FONT>
-  >]
-  Build -> Start -> Exec -> Shutdown
-  Exec -> DevCommands[style=dotted dir=none]
-  { rank=same; Exec; DevCommands }
-}
-]]></code>
-        <div class="tc">
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0.00 0.00 544.58 120.00">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 116)">
-<title>G</title>
-<polygon fill="transparent" stroke="transparent" points="-4,4 -4,-116 540.5796,-116 540.5796,4 -4,4"/>
-<!-- Shutdown -->
-<g id="node1" class="node">
-<title>Shutdown</title>
-<polygon fill="none" stroke="#000000" points="536.4697,-112 435.9097,-112 435.9097,-76 536.4697,-76 536.4697,-112"/>
-<text text-anchor="start" x="443.7998" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
-<text text-anchor="start" x="457.7998" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">Shutdown</text>
-<text text-anchor="start" x="514.5796" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
-<text text-anchor="start" x="446.2946" y="-82.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
-<text text-anchor="start" x="460.2946" y="-82.4" font-family="Courier,monospace" font-size="14.00" fill="#000000">dx/stop</text>
-<text text-anchor="start" x="519.0848" y="-82.4" font-family="avenir" font-size="14.00" fill="#000000">  </text>
-</g>
-<!-- Build -->
-<g id="node2" class="node">
-<title>Build</title>
-<polygon fill="none" stroke="#000000" points="104.2834,-112 -.0946,-112 -.0946,-76 104.2834,-76 104.2834,-112"/>
-<text text-anchor="start" x="22.5355" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
-<text text-anchor="start" x="36.5355" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">Build</text>
-<text text-anchor="start" x="67.6533" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
-<text text-anchor="start" x="8" y="-82.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
-<text text-anchor="start" x="22" y="-82.4" font-family="Courier,monospace" font-size="14.00" fill="#000000">dx/build</text>
-<text text-anchor="start" x="89.1888" y="-82.4" font-family="avenir" font-size="14.00" fill="#000000">  </text>
-</g>
-<!-- Start -->
-<g id="node3" class="node">
-<title>Start</title>
-<polygon fill="none" stroke="#000000" points="244.4722,-112 140.0942,-112 140.0942,-76 244.4722,-76 244.4722,-112"/>
-<text text-anchor="start" x="165.0637" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
-<text text-anchor="start" x="179.0637" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">Start</text>
-<text text-anchor="start" x="205.5027" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
-<text text-anchor="start" x="148.1888" y="-82.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
-<text text-anchor="start" x="162.1888" y="-82.4" font-family="Courier,monospace" font-size="14.00" fill="#000000">dx/start</text>
-<text text-anchor="start" x="229.3776" y="-82.4" font-family="avenir" font-size="14.00" fill="#000000">  </text>
-</g>
-<!-- Build&#45;&gt;Start -->
-<g id="edge1" class="edge">
-<title>Build-&gt;Start</title>
-<path fill="none" stroke="#000000" d="M104.2955,-94C112.5972,-94 121.2577,-94 129.7675,-94"/>
-<polygon fill="#000000" stroke="#000000" points="130.0385,-97.5001 140.0385,-94 130.0384,-90.5001 130.0385,-97.5001"/>
-</g>
-<!-- Exec -->
-<g id="node4" class="node">
-<title>Exec</title>
-<polygon fill="none" stroke="#000000" points="387.8791,-112 292.2983,-112 292.2983,-76 387.8791,-76 387.8791,-112"/>
-<text text-anchor="start" x="303.5452" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
-<text text-anchor="start" x="317.5452" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">Execute</text>
-<text text-anchor="start" x="362.6322" y="-96.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
-<text text-anchor="start" x="300.1936" y="-82.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
-<text text-anchor="start" x="314.1936" y="-82.4" font-family="Courier,monospace" font-size="14.00" fill="#000000">dx/exec</text>
-<text text-anchor="start" x="372.9838" y="-82.4" font-family="avenir" font-size="14.00" fill="#000000">  </text>
-</g>
-<!-- Start&#45;&gt;Exec -->
-<g id="edge2" class="edge">
-<title>Start-&gt;Exec</title>
-<path fill="none" stroke="#000000" d="M244.3939,-94C256.4713,-94 269.4015,-94 281.7275,-94"/>
-<polygon fill="#000000" stroke="#000000" points="281.9074,-97.5001 291.9073,-94 281.9073,-90.5001 281.9074,-97.5001"/>
-</g>
-<!-- Exec&#45;&gt;Shutdown -->
-<g id="edge3" class="edge">
-<title>Exec-&gt;Shutdown</title>
-<path fill="none" stroke="#000000" d="M387.9276,-94C399.8907,-94 412.8819,-94 425.381,-94"/>
-<polygon fill="#000000" stroke="#000000" points="425.7311,-97.5001 435.731,-94 425.731,-90.5001 425.7311,-97.5001"/>
-</g>
-<!-- DevCommands -->
-<g id="node5" class="node">
-<title>DevCommands</title>
-<polygon fill="none" stroke="#000000" points="400.0116,-36 280.1658,-36 280.1658,0 400.0116,0 400.0116,-36"/>
-<text text-anchor="start" x="288.3776" y="-20.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
-<text text-anchor="start" x="302.3776" y="-20.4" font-family="avenir" font-size="14.00" fill="#000000">Development</text>
-<text text-anchor="start" x="377.7998" y="-20.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
-<text text-anchor="start" x="304.3929" y="-6.4" font-family="avenir" font-size="14.00" fill="#000000">    </text>
-<text text-anchor="start" x="318.3929" y="-6.4" font-family="Courier,monospace" font-size="14.00" fill="#000000">bin/\*</text>
-<text text-anchor="start" x="368.7845" y="-6.4" font-family="avenir" font-size="14.00" fill="#000000">  </text>
-</g>
-<!-- Exec&#45;&gt;DevCommands -->
-<g id="edge4" class="edge">
-<title>Exec-&gt;DevCommands</title>
-<path fill="none" stroke="#000000" stroke-dasharray="1,5" d="M340.0887,-75.9092C340.0887,-62.6426 340.0887,-49.376 340.0887,-36.1094"/>
-</g>
-</g>
-</svg>
-        </div>
-        <figcaption class="sr-only">
-          <p class="p mh-auto">
-            Diagram showing Build (<code>dx/build</code>) leading to Start (<code>dx/start</code>), leading to Execute (<code>dx/exec</code>). Execute connects to Development (this <code>bin/*</code> commands discussed above), but also leads to Shutdown (<code>dx/stop</code>)
-          </p>
-        </figcaption>
-      </figure>
-      <table class="mh-auto collapse w-auto">
-        <thead>
-          <tr>
-            <th class="tl va-top pa-2">
-              Command
-              <div class="dn-ns db fw-normal">Purpose</div>
-            </th>
-            <th class="tl va-top pa-2 dtc-ns dn">Purpose</th>
-            <th class="tl va-top pa-2">Notes</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="pa-2 bt">
-              <code class="pa-2 br-2 bg-black purple-lighter">dx/build</code>
-              <p class="p db dn-ns">Build or download anything needed.</p>
-            </td>
-            <td class="pa-2 bt dtc-ns dn">
-              <p class="p">Build or download anything needed.</p>
-            </td>
-            <td class="pa-2 bt">
-              <p class="p">
-                The team should determine the cadence for running this command.  Everyone would naturally run it once to first set up their dev environment, however it may be desriable to run it many times per week to ensure any needed libraries or artifacts are up to date.
-              </p>
-            </td>
-          </tr>
-          <tr>
-            <td class="pa-2 bt">
-              <code class="pa-2 br-2 bg-black purple-lighter">dx/start</code>
-              <p class="p db dn-ns">Start up the environment and services</p>
-            </td>
-            <td class="pa-2 bt dtc-ns dn">
-              <p class="p">Start up the environment and services</p>
-            </td>
-            <td class="pa-2 bt">
-              <p class="p">
-                This should do whatever is needed to start up the environment for the app, including any ancillary services like dev databases.  This would not necessarily handle app-specific initialization of the contents or behavior of the service. It would merely make them available.
-              </p>
-            </td>
-          </tr>
-          <tr>
-            <td class="pa-2 bt">
-              <code class="dn dib-ns ws-nowrap pa-2 br-2 bg-black purple-lighter">dx/exec «command»</code>
-              <pre><code class="db dn-ns pa-2 br-2 bg-black purple-lighter">dx/exec \
-  «command»</code></pre>
-              <p class="p db dn-ns">Run a command in the dev environment</p>
-            </td>
-            <td class="pa-2 bt dtc-ns dn">
-              <p class="p">Run a command in the dev environment</p>
-            </td>
-            <td class="pa-2 bt">
-              <p class="p">
-                This assumes a virtualized environment where commands are run inside a container or virtual machine. If the dev environment is the local computer, this is not needed.
-              </p>
-            </td>
-          </tr>
-          <tr>
-            <td class="pa-2 bt">
-              <code class="dib pa-2 br-2 bg-black purple-lighter">dx/stop</code>
-              <p class="p db dn-ns">Shutdown the environment</p>
-            </td>
-            <td class="pa-2 bt dtc-ns dn">
-              <p class="p">Shutdown the environment</p>
-            </td>
-            <td class="pa-2 bt">
-              <p class="p">
-                This powers down any services and virtualized environments.
-              </p>
-            </td>
-          </tr>
         </tbody>
       </table>
     </section>

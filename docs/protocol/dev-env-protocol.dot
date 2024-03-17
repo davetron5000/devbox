@@ -1,0 +1,37 @@
+digraph G {
+
+  rankdir="LR"
+  nodesep=0.55
+  compound=true
+  
+  node[shape=box fontname=avenir]
+
+  Shutdown[label=<
+    <FONT face="avenir">Shutdown</FONT>
+    <br/>
+    <FONT face="courier">dx/stop</FONT>
+  >]
+  Build[label=<
+    <FONT face="avenir">Build</FONT>
+    <br/>
+    <FONT face="courier">dx/build</FONT>
+  >]
+  Start[label=<
+    <FONT face="avenir">Start</FONT>
+    <br/>
+    <FONT face="courier">dx/start</FONT>
+  >]
+  Exec[label=<
+    <FONT face="avenir">Execute</FONT>
+    <br/>
+    <FONT face="courier">dx/exec</FONT>
+  >]
+  DevCommands[label=<
+    <FONT face="avenir">Development</FONT>
+    <br/>
+    <FONT face="courier">bin/\*</FONT>
+  >]
+  Build -> Start -> Exec -> Shutdown
+  Exec -> DevCommands[style=dotted dir=none]
+  { rank=same; Exec; DevCommands }
+}

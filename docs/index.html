@@ -150,107 +150,300 @@
     <section class="pa-3 bg-purple-lightest bg-purple-lightest-gradient black pt-6 pb-4">
       <h3 class="tc lh-title f-5 ma-0">Table of Contents</h3>
       <p class="lh-copy measure tc mh-auto">
-        100 pages, 15 chapters.
+        130 pages, 20 short chapters.
       </p>
-      <ol class="w-100 measure-narrow mh-auto f-4">
-        <li><p class="measure ma-0">
-            <strong class="lh-title">Your Dev Environment Sucks</strong>.
-            <div class="f-2 measure lh-copy">What problem are we solving? You need a better dev environment that you understand and control.</div>
-          </p>
-        </li>
-        <li><p class="measure ma-0">
-            <strong class="lh-title">A Dev Environment Defined</strong>.
-            <div class="f-2 measure lh-copy">
-              You are a programmer and you write your programs inside your dev environment. This environment is made up of pieces, and severa of them are kinda the same as everyone else's.  That's what we'll be automating.
-            </div>
-          </p>
-        </li>
-        <li><p class="measure ma-0">
-            <strong class="lh-title">The Four Types of Dev Environments</strong>.
-            <div class="f-2 measure lh-copy">
-              That Gartner quadrant above outlines four common approaches, three of which aren't as good as the one we'll be learning about: virtualized and automated.
-            </div>
-          </p>
-        </li>
-        <li><p class="measure ma-0">
-            <strong class="lh-title">What is Docker and How Does It Work?</strong>
-            <div class="f-2 measure lh-copy">
-              Confused about the difference between a container and image?  I was, too.  This chapter will sort
-              all that out, and more.
-            </div>
-          </p>
-        </li>
-        <li><p class="measure ma-0">
-            <strong class="lh-title">Managing the Operating System With Base Images</strong>
-            <div class="f-2 measure lh-copy">
-              Figuring out what images contain was software, much less which ones are safe to use, is a convoluted process.  This chapter will walk you through it.
-            </div>
-          </p>
-        </li>
-        <li><p class="measure ma-0">
-            <strong class="lh-title">Installing Software in the Dev Environment</strong>
-            <div class="f-2 measure lh-copy">
-              Piping curl into bash always feels kinda gross, but if that's how the vendor wants software installed, that's what you do. This chapter will help you find the canonical way to safely install any software into your dev environment.
-            </div>
-          </p>
-        </li>
-        <li><p class="measure ma-0">
-            <strong class="lh-title">Publishing Ports and Mounting Volumes to Do Development</strong>
-            <div class="f-2 measure lh-copy">
-              Connecting your virtualized enviornment to the outside world is not as easy as it could be.  Learn the basics for how Docker does this so you know what's going on during development.
-            </div>
-          </p>
-        </li>
-        <li><p class="measure ma-0">
-            <strong class="lh-title">Running Databases and Caches with One Line of Code</strong>
-            <div class="f-2 measure lh-copy">
-              Say good bye to figuring out why some old version of Postgres no longer works on MacOs Bakersfield (or whatever).
-            </div>
-          </p>
-        </li>
-        <li><p class="measure ma-0">
-            <strong class="lh-title">What is a Good User Experience for Automation Scripts?</strong>
-            <div class="f-2 measure lh-copy">
-              Docker is powerful, but its command-line invocations leave a lot to be desired. We can do better.  This chapter is five pages on great CLI user experience.
-            </div>
-          </p>
-        </li>
-        <li><p class="measure ma-0">
-            <strong class="lh-title">The Arcane World of the UNIX Command Line</strong>
-            <div class="f-2 measure lh-copy">
-              You will never find a more succinct summary of exit codes, quotation markes, and output streams than this chapter. If you ever wondered what <code class="dib ph-2 pv-1 bg-gray-darkest green-lighter bn br-2">&gt; /dev/null 2&gt;&amp;1</code> actually means, this chapter has the answer.
-            </div>
-          </p>
-        </li>
-        <li><p class="measure ma-0">
-            <strong class="lh-title">Writing One Nice Script</strong>
-            <div class="f-2 measure lh-copy">
-              It takes a lot of code to make a nice bash script. This chapter walks you through it step by step to build your bash confidence.
-            </div>
-          </p>
-        </li>
-        <li><p class="measure ma-0">
-            <strong class="lh-title">Build the Remaining Scripts</strong>
-            <div class="f-2 measure lh-copy">
-              It turns out, you can apply standard software engineering principles to bash scripts, if you know just a few arcane incandations. They are all in this chapter.
-            </div>
-          </p>
-        </li>
-        <li><p class="measure ma-0">
-            <strong class="lh-title">Sustainably Maintaining The Dev Environment</strong>
-            <div class="f-2 measure lh-copy">
-              It's one thing to set all this up the first time.  This chapter will outline how to keep it working well over years.
-            </div>
-          </p>
-        </li>
-        <li><p class="measure ma-0">
-            <strong class="lh-title">There’s No Such Thing as a Free Lunch</strong>
-            <div class="f-2 measure lh-copy">
-              Developing software is your core competency. Don't outsource it.
-            </div>
-          </p>
-        </li>
-    </section>
+
+<ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0">
+  <li class='lh-title'>
+    1. Your Dev Environment Sucks
+    <ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0 pl-3 mb-3">
+            </ol>
+          </li>
+  <li class='lh-title'>
+    2. A Dev Environment Defined
+    <ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0 pl-3 mb-3">
+    <li><span class='f-2'>
+            2.1. Where Work is Done - The Foundational Layers of a Dev Environment
+            </span></li>
+    <li><span class='f-2'>
+            2.2. How Work is Done - The Workflows of a Dev Environment
+            </span></li>
+            </ol>
+          </li>
+  <li class='lh-title'>
+    3. The Four Types of Dev Environments
+    <ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0 pl-3 mb-3">
+    <li><span class='f-2'>
+            3.1. The Best Documentation is an Executable Script
+            </span></li>
+    <li><span class='f-2'>
+            3.2. Our Computers are Increasingly Not Under Our Control
+            </span></li>
+    <li><span class='f-2'>
+            3.3. Automation and Virtualization Lead to Sustainability
+            </span></li>
+    <li><span class='f-2'>
+            3.4. You Must Always Understand One Level Below the Current Abstraction
+            </span></li>
+            </ol>
+          </li>
+  <li class='lh-title'>
+    4. What is Docker and How Does It Work?
+    <ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0 pl-3 mb-3">
+    <li><span class='f-2'>
+            4.1. Images are Cloned Hard Drives
+            </span></li>
+    <li><span class='f-2'>
+            4.2. Nothing is Registered with the Container Registry, but if Something Were Registered, it Would Definitely Not Be Containers. This is Fine.
+            </span></li>
+    <li><span class='f-2'>
+            4.3. The Host is Your Computer
+            </span></li>
+    <li><span class='f-2'>
+            4.4. Ports are not Mapped, But Published (or Exposed)
+            </span></li>
+    <li><span class='f-2'>
+            4.5. Disks are Called Volumes…Sometimes. But They Definitely Are Never Called Disks
+            </span></li>
+            </ol>
+          </li>
+  <li class='lh-title'>
+    5. Managing the Operating System With Base Images
+    <ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0 pl-3 mb-3">
+    <li><span class='f-2'>
+            5.1. Choosing an Operating System
+            </span></li>
+    <li><span class='f-2'>
+            5.2. Finding Images You Can Trust
+            </span></li>
+    <li><span class='f-2'>
+            5.3. You Want Versions, But Docker Provides Only Tags
+            </span></li>
+    <li><span class='f-2'>
+            5.4. Never, Ever, Ever—and I do Mean Ever—Use the latest Tag
+            </span></li>
+            </ol>
+          </li>
+  <li class='lh-title'>
+    6. Installing Software in the Dev Environment
+    <ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0 pl-3 mb-3">
+    <li><span class='f-2'>
+            6.1. The App We’ll Build to Make My Cats Say Things
+            </span></li>
+    <li><span class='f-2'>
+            6.2. Establish a Chain of Trust for Software Installation
+            </span></li>
+    <li><span class='f-2'>
+            6.3. Building and Testing an Image
+            </span></li>
+    <li><span class='f-2'>
+            6.4. Using Layers to Manage Installation
+            </span></li>
+    <li><span class='f-2'>
+            6.5. Adding Complex Installation Instructions
+            </span></li>
+    <li><span class='f-2'>
+            6.6. Adding Configuration to the Dockerfile
+            </span></li>
+            </ol>
+          </li>
+  <li class='lh-title'>
+    7. Publishing Ports and Mounting Volumes to Do Development
+    <ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0 pl-3 mb-3">
+    <li><span class='f-2'>
+            7.1. One Does Not Map a Port…One Publishes It
+            </span></li>
+    <li><span class='f-2'>
+            7.2. Mounting A Bind Mount
+            </span></li>
+    <li><span class='f-2'>
+            7.3. Adding a Feature Using our Dev Environment
+            </span></li>
+            </ol>
+          </li>
+  <li class='lh-title'>
+    8. Running Databases and Caches with One Line of Code
+    <ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0 pl-3 mb-3">
+    <li><span class='f-2'>
+            8.1. Establishing a Chain of Trust for Images
+            </span></li>
+    <li><span class='f-2'>
+            8.2. Understanding Who Maintains an Image
+            </span></li>
+    <li><span class='f-2'>
+            8.3. Docker Compose Configures a Virtual Network
+            </span></li>
+    <li><span class='f-2'>
+            8.4. Understanding What an Image You Found in a <span class='tds'>Parking Lot</span> On Docker Hub Will Do When You Use It
+            </span></li>
+    <li><span class='f-2'>
+            8.5. Docker Compose Can Replace Most Other Commands
+            </span></li>
+            </ol>
+          </li>
+  <li class='lh-title'>
+    9. What is a Good User Experience for Automation Scripts?
+    <ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0 pl-3 mb-3">
+    <li><span class='f-2'>
+            9.1. Bash’s Ubiquity Outweighs your Favorite Programming Language
+            </span></li>
+    <li><span class='f-2'>
+            9.2. Despite It’s Flaws, You Can Make a Good UI with Bash
+            </span></li>
+    <li><span class='f-2'>
+            9.3. Scripts as Protocols for Future Enhancements
+            </span></li>
+            </ol>
+          </li>
+  <li class='lh-title'>
+    10. The Arcane World of the UNIX Command Line
+    <ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0 pl-3 mb-3">
+    <li><span class='f-2'>
+            10.1. The Path is Where Commands are Found
+            </span></li>
+    <li><span class='f-2'>
+            10.2. Output Streams Give Control Over Output
+            </span></li>
+    <li><span class='f-2'>
+            10.3. Exit Codes Tell You If a Command Was Successful
+            </span></li>
+    <li><span class='f-2'>
+            10.4. Globbing and Expansion and Escaping
+            </span></li>
+            </ol>
+          </li>
+  <li class='lh-title'>
+    11. Writing One Nice Script
+    <ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0 pl-3 mb-3">
+    <li><span class='f-2'>
+            11.1. Turning Relative Paths Into Absolute Paths
+            </span></li>
+    <li><span class='f-2'>
+            11.2. Checking Nicely if Command Line Utilities Exist
+            </span></li>
+    <li><span class='f-2'>
+            11.3. Understanding What the Script is Doing
+            </span></li>
+    <li><span class='f-2'>
+            11.4. Allow The User to Ask for Help
+            </span></li>
+    <li><span class='f-2'>
+            11.5. Adding What We Want to Automate
+            </span></li>
+            </ol>
+          </li>
+  <li class='lh-title'>
+    12. Build the Remaining Scripts
+    <ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0 pl-3 mb-3">
+    <li><span class='f-2'>
+            12.1. Automating Dev Env Startup
+            </span></li>
+    <li><span class='f-2'>
+            12.2. Putting Shared Values in an .env File
+            </span></li>
+    <li><span class='f-2'>
+            12.3. Automating Shutdown
+            </span></li>
+    <li><span class='f-2'>
+            12.4. Automating Execution Inside a Container
+            </span></li>
+    <li><span class='f-2'>
+            12.5. Executing the Improved Workflow
+            </span></li>
+            </ol>
+          </li>
+  <li class='lh-title'>
+    13. Customizing Your Dev Environment
+    <ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0 pl-3 mb-3">
+    <li><span class='f-2'>
+            13.1. Customize Workflows Via Scripts and Aliases on Your Host
+            </span></li>
+    <li><span class='f-2'>
+            13.2. Adding Your Own Files to the Image
+            </span></li>
+    <li><span class='f-2'>
+            Up Next
+            </span></li>
+            </ol>
+          </li>
+  <li class='lh-title'>
+    14. Sustainably Maintaining The Dev Environment
+    <ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0 pl-3 mb-3">
+    <li><span class='f-2'>
+            14.1. Debugging
+            </span></li>
+    <li><span class='f-2'>
+            14.2. Managing Your Docker Install
+            </span></li>
+    <li><span class='f-2'>
+            14.3. Quality-control of Bash Scripts
+            </span></li>
+            </ol>
+          </li>
+  <li class='lh-title'>
+    15. There’s No Such Thing as a Free Lunch
+    <ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0 pl-3 mb-3">
+    <li><span class='f-2'>
+            15.1. Suboptimal I/O Performance on Some Non-Linux Platforms
+            </span></li>
+    <li><span class='f-2'>
+            15.2. Processor Architecture Issues AKA Docker Platform
+            </span></li>
+    <li><span class='f-2'>
+            15.3. Production/Dev Mismatches
+            </span></li>
+            </ol>
+          </li>
+  <li class='lh-title'>
+    16. Tech Companies Should Not Own Your Dev Environment
+    <ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0 pl-3 mb-3">
+    <li><span class='f-2'>
+            16.1. What is a Core Competency?
+            </span></li>
+    <li><span class='f-2'>
+            16.2. Your Dev Environment is Your Core Competency
+            </span></li>
+    <li><span class='f-2'>
+            16.3. But Microsoft Has an Open Source Spec About Exactly This!
+            </span></li>
+    <li><span class='f-2'>
+            16.4. Hold Up, isn’t Docker Also Some Tech Company That Doesn’t Care About Me?
+            </span></li>
+            </ol>
+          </li>
+  <li class='lh-title'>
+    A. The Docker Lexicon for Regular People
+    <ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0 pl-3 mb-3">
+            </ol>
+          </li>
+  <li class='lh-title'>
+    B. Bash and Command-Line Quick Reference
+    <ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0 pl-3 mb-3">
+    <li><span class='f-2'>
+            18.1. Concepts
+            </span></li>
+    <li><span class='f-2'>
+            18.2. Symbol Soup
+            </span></li>
+            </ol>
+          </li>
+  <li class='lh-title'>
+    C. Protocols for Dev Environments
+    <ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0 pl-3 mb-3">
+    <li><span class='f-2'>
+            <a href='/protocol/index.html#foundational' class='blue-300'>19.1. Foundational Core Protocol</a>
+            </span></li>
+    <li><span class='f-2'>
+            <a href='/protocol/index.html#workspace' class='blue-300'>19.2. Workspace Protocol</a>
+            </span></li>
+            </ol>
+          </li>
+  <li class='lh-title'>
+    D. Colophon or, The Chapter About Fonts
+    <ol class="w-100 measure-narrow mh-auto f-4 lst-none lh-copy pa-0 pl-3 mb-3">
+            </ol>
+          </li>
+        </ol>
     <section class="pa-3 pv-5 bg-white-ish" style="background: linear-gradient(var(--mg-white-ish) 82%,var(--mg-purple-darkest));">
       <h3 class="tc lh-title ma-0 f-4">Coming Soon</h3>
       <p class="measure lh-copy mh-auto">
