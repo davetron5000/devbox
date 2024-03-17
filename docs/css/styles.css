@@ -9,25 +9,25 @@ https://ghola.dev/?numColors=6&colorHex=%237c7196&secondaryColorHex=%23c8ae00&nu
 :root {
 
 
-  --mg-blue-darkest: #151122; /* Vulcan */
-  --mg-blue-darker: #201a34; /* Mirage */
-  --mg-blue-dark: #201b35; /* Mirage */
-  --mg-blue: #9083c0; /* Lavender Purple */
-  --mg-blue-light: #cec8e3; /* Prelude */
-  --mg-blue-lighter: #f3f1f8; /* Whisper */
-  --mg-blue-lightest: #fcfcfd; /* Athens Gray */
+  --mg-blue-100: #151122; /* Vulcan */
+  --mg-blue-200: #201a34; /* Mirage */
+  --mg-blue-300: #201b35; /* Mirage */
+  --mg-blue-500: #9083c0; /* Lavender Purple */
+  --mg-blue-600: #cec8e3; /* Prelude */
+  --mg-blue-700: #f3f1f8; /* Whisper */
+  --mg-blue-800: #fcfcfd; /* Athens Gray */
 
-  --mg-gray-darkest: #1a1a1a; /* Cod Gray */
-  --mg-gray-darker: #272727; /* Mine Shaft */
-  --mg-gray-dark: #282828; /* Mine Shaft */
-  --mg-gray: #a1a1a1; /* Silver Chalice */
-  --mg-gray-light: #d5d5d5; /* Alto */
-  --mg-gray-lighter: #f5f5f5; /* Wild Sand */
-  --mg-gray-lightest: #fcfcfc; /* Alabaster */
+  --mg-gray-100: #1a1a1a; /* Cod Gray */
+  --mg-gray-200: #272727; /* Mine Shaft */
+  --mg-gray-300: #282828; /* Mine Shaft */
+  --mg-gray-500: #a1a1a1; /* Silver Chalice */
+  --mg-gray-600: #d5d5d5; /* Alto */
+  --mg-gray-700: #f5f5f5; /* Wild Sand */
+  --mg-gray-800: #fcfcfc; /* Alabaster */
 }
 
 input:focus, button:focus {
-  border-color: var(--mg-purple-light);
+  border-color: var(--mg-purple-600);
 }
 
 input.bg-white:focus {
@@ -35,15 +35,15 @@ input.bg-white:focus {
 }
 
 .bg-purple-lightest-gradient {
-  background: linear-gradient(var(--mg-purple-lightest),var(--mg-white-ish));
+  background: linear-gradient(var(--mg-purple-900),var(--mg-white-ish));
 }
 .bg-purple-darkest-gradient {
-  background: linear-gradient(var(--mg-purple-darkest),var(--mg-purple-darker));
+  background: linear-gradient(var(--mg-purple-100),var(--mg-purple-200));
 }
 
-svg.purple-dark {
-  stroke: var(--mg-purple-dark);
-  fill: var(--mg-purple-dark);
+svg.purple-300 {
+  stroke: var(--mg-purple-300);
+  fill: var(--mg-purple-300);
 }
 
 .sr-only {

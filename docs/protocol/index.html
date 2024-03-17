@@ -27,7 +27,7 @@
 
 <body class="ff-sans bg-white black">
   <header class="pa-3 w-100 w-60-ns mh-auto black-ish mt-6-ns mb-3 flex flex-row-ns flex-column items-baseline-ns items-center justify-center w-100">
-    <svg width="200" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 122.88 103.53" class="purple-dark mr-4-ns" style="enable-background:new 0 0 122.88 103.53" xml:space="preserve"><style type="text/css">.st0{fill-rule:evenodd;clip-rule:evenodd;}</style><g><path class="st0" d="M5.47,0h111.93c3.01,0,5.47,2.46,5.47,5.47v92.58c0,3.01-2.46,5.47-5.47,5.47H5.47 c-3.01,0-5.47-2.46-5.47-5.47V5.47C0,2.46,2.46,0,5.47,0L5.47,0z M31.84,38.55l17.79,18.42l2.14,2.13l-2.12,2.16L31.68,80.31 l-5.07-5l15.85-16.15L26.81,43.6L31.84,38.55L31.84,38.55z M94.1,79.41H54.69v-6.84H94.1V79.41L94.1,79.41z M38.19,9.83 c3.19,0,5.78,2.59,5.78,5.78s-2.59,5.78-5.78,5.78c-3.19,0-5.78-2.59-5.78-5.78S35,9.83,38.19,9.83L38.19,9.83z M18.95,9.83 c3.19,0,5.78,2.59,5.78,5.78s-2.59,5.78-5.78,5.78c-3.19,0-5.78-2.59-5.78-5.78S15.75,9.83,18.95,9.83L18.95,9.83z M7.49,5.41 h107.91c1.15,0,2.09,0.94,2.09,2.09v18.32H5.4V7.5C5.4,6.35,6.34,5.41,7.49,5.41L7.49,5.41z"/></g></svg>
+    <svg width="200" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 122.88 103.53" class="purple-300 mr-4-ns" style="enable-background:new 0 0 122.88 103.53" xml:space="preserve"><style type="text/css">.st0{fill-rule:evenodd;clip-rule:evenodd;}</style><g><path class="st0" d="M5.47,0h111.93c3.01,0,5.47,2.46,5.47,5.47v92.58c0,3.01-2.46,5.47-5.47,5.47H5.47 c-3.01,0-5.47-2.46-5.47-5.47V5.47C0,2.46,2.46,0,5.47,0L5.47,0z M31.84,38.55l17.79,18.42l2.14,2.13l-2.12,2.16L31.68,80.31 l-5.07-5l15.85-16.15L26.81,43.6L31.84,38.55L31.84,38.55z M94.1,79.41H54.69v-6.84H94.1V79.41L94.1,79.41z M38.19,9.83 c3.19,0,5.78,2.59,5.78,5.78s-2.59,5.78-5.78,5.78c-3.19,0-5.78-2.59-5.78-5.78S35,9.83,38.19,9.83L38.19,9.83z M18.95,9.83 c3.19,0,5.78,2.59,5.78,5.78s-2.59,5.78-5.78,5.78c-3.19,0-5.78-2.59-5.78-5.78S15.75,9.83,18.95,9.83L18.95,9.83z M7.49,5.41 h107.91c1.15,0,2.09,0.94,2.09,2.09v18.32H5.4V7.5C5.4,6.35,6.34,5.41,7.49,5.41L7.49,5.41z"/></g></svg>
       <div>
         <h1 class="f-6 f-7-ns tl-ns tc lh-title ma-0">
           Dev Environment Protocol
@@ -46,7 +46,7 @@
         There are two groups of scripts: those that setup the environment (which I call the <em>Foundational Core</em>) and those that are using during development (which I call the <em>Workspace</em>).
       </p>
     </section>
-    <section class="bg-purple-lightest pv-4 ph-3" id="foundational">
+    <section class="bg-purple-900 pv-4 ph-3" id="foundational">
       <h3 class="tc f-4 ttu fw-5 tracked">Foundational Core - Setting Up the Environment</h3>
       <p class="p mh-auto">
         The dev environment itself should be scripted, and this should be distinctly managed from dev tasks.  For example, the scripts to start/stop the dev environment itself should <strong>not</strong> be in <code>bin/</code>.
@@ -161,7 +161,7 @@
         <tbody>
           <tr>
             <td class="pa-2 bt">
-              <code class="pa-2 br-2 bg-black purple-lighter">dx/build</code>
+              <code class="pa-2 br-2 bg-black purple-700">dx/build</code>
               <p class="p db dn-ns">Build or download anything needed.</p>
             </td>
             <td class="pa-2 bt dtc-ns dn">
@@ -175,7 +175,7 @@
           </tr>
           <tr>
             <td class="pa-2 bt">
-              <code class="pa-2 br-2 bg-black purple-lighter">dx/start</code>
+              <code class="pa-2 br-2 bg-black purple-700">dx/start</code>
               <p class="p db dn-ns">Start up the environment and services</p>
             </td>
             <td class="pa-2 bt dtc-ns dn">
@@ -189,8 +189,8 @@
           </tr>
           <tr>
             <td class="pa-2 bt">
-              <code class="dn dib-ns ws-nowrap pa-2 br-2 bg-black purple-lighter">dx/exec «command»</code>
-              <pre><code class="db dn-ns pa-2 br-2 bg-black purple-lighter">dx/exec \
+              <code class="dn dib-ns ws-nowrap pa-2 br-2 bg-black purple-700">dx/exec «command»</code>
+              <pre><code class="db dn-ns pa-2 br-2 bg-black purple-700">dx/exec \
   «command»</code></pre>
               <p class="p db dn-ns">Run a command in the dev environment</p>
             </td>
@@ -205,7 +205,7 @@
           </tr>
           <tr>
             <td class="pa-2 bt">
-              <code class="dib pa-2 br-2 bg-black purple-lighter">dx/stop</code>
+              <code class="dib pa-2 br-2 bg-black purple-700">dx/stop</code>
               <p class="p db dn-ns">Shutdown the environment</p>
             </td>
             <td class="pa-2 bt dtc-ns dn">
@@ -220,7 +220,7 @@
         </tbody>
       </table>
     </section>
-    <section class="bg-gray-lighter pv-4 ph-3" id="workspace">
+    <section class="bg-gray-700 pv-4 ph-3" id="workspace">
       <h3 class="tc f-4 ttu fw-5 tracked">Workspace - During Development</h3>
       <p class="p mh-auto">
         Once the Foundational Core (dev environment) is set up, the scripts in the Workspace will automate common tasks.  They are ideally managed <strong>as</strong> command-line scripts, as this affords the widest variety of integrations with other tools.
@@ -335,7 +335,7 @@
         <tbody>
           <tr>
             <td class="pa-2 bt">
-              <code class="pa-2 br-2 bg-black purple-lighter">bin/setup</code>
+              <code class="pa-2 br-2 bg-black purple-700">bin/setup</code>
               <p class="db dn-ns p">Perform any app-specific setup</p>
             </td>
             <td class="pa-2 bt dtc-ns dn">
@@ -349,7 +349,7 @@
           </tr>
           <tr>
             <td class="pa-2 bt">
-              <code class="pa-2 br-2 bg-black purple-lighter">bin/build</code>
+              <code class="pa-2 br-2 bg-black purple-700">bin/build</code>
               <p class="dn-ns db p">Build any needed artifacts</p>
             </td>
             <td class="pa-2 bt dtc-ns dn">
@@ -363,7 +363,7 @@
           </tr>
           <tr>
             <td class="pa-2 bt">
-              <code class="pa-2 br-2 bg-black purple-lighter">bin/run</code>
+              <code class="pa-2 br-2 bg-black purple-700">bin/run</code>
               <p class="db dn-ns p">Run the system locally</p>
             </td>
             <td class="pa-2 bt dtc-ns dn">
@@ -377,7 +377,7 @@
           </tr>
           <tr>
             <td class="pa-2 bt">
-              <code class="pa-2 br-2 bg-black purple-lighter">bin/ci</code>
+              <code class="pa-2 br-2 bg-black purple-700">bin/ci</code>
               <p class="db dn-ns p">Run tests and quality checks</p>
             </td>
             <td class="pa-2 bt dtc-ns dn">
@@ -391,7 +391,7 @@
           </tr>
           <tr>
             <td class="pa-2 bt">
-              <code class="pa-2 br-2 bg-black purple-lighter">bin/dev</code>
+              <code class="pa-2 br-2 bg-black purple-700">bin/dev</code>
               <p class="db dn-ns p">Run the app in dev mode, rebuilding artifacts as needed.</p>
             </td>
             <td class="pa-2 bt dtc-ns dn">
@@ -401,7 +401,7 @@
               <p class="p">
                 This should build and start the app for local development, including any automatic re-building or re-loading.  A basic example of this, using <code>bin/run</code> and <code>bin/build</code> would be:
               </p>
-              <pre><code class="db-ns dn bg-black purple-lighter pa-2 br-2">trap killgroup SIGINT
+              <pre><code class="db-ns dn bg-black purple-700 pa-2 br-2">trap killgroup SIGINT
 
 killgroup() {
   echo "Killing everything..."
@@ -417,7 +417,7 @@ wait</code></pre>
             </td>
           </tr>
           <tr><td colspan="2">
-              <pre><code class="dn-ns db bg-black purple-lighter pa-2 br-2">trap killgroup SIGINT
+              <pre><code class="dn-ns db bg-black purple-700 pa-2 br-2">trap killgroup SIGINT
 
 killgroup() {
   echo "Killing everything..."
@@ -432,9 +432,9 @@ wait</code></pre>
       </table>
     </section>
   </main>
-  <footer class="bg-purple-darkest bg-purple-darkest-gradient purple-lightest pa-3">
+  <footer class="bg-purple-100 bg-purple-100-gradient purple-900 pa-3">
     <p class="lh-copy measure ph-2 mh-auto">
-      This website and book are Copyright &copy; 2023 by David Bryant Copeland, All Rights Reserved.  The book was produced without <a class="purple-lightest" href="http://declare-ai.org/1.0.0/none.html">no assistance from a Generative AI</a>. The icons on this page were provided by <a class="purple-lightest" href="https://uxwing.com">uxwing</a>.
+      This website and book are Copyright &copy; 2023 by David Bryant Copeland, All Rights Reserved.  The book was produced without <a class="purple-900" href="http://declare-ai.org/1.0.0/none.html">no assistance from a Generative AI</a>. The icons on this page were provided by <a class="purple-900" href="https://uxwing.com">uxwing</a>.
     </p>
   </footer>
 </body>
