@@ -1,49 +1,76 @@
-:root {
-  --mg-ff-sans: Avenir, Montserrat, Corbel, 'URW Gothic', source-sans-pro, sans-serif;
+@font-face {
+  font-family: "Anton";
+  src: url("/fonts/Anton-Regular.ttf") format("truetype");
 }
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat-VariableFont_wght.ttf") format("truetype");
+}
+
+:root {
+  --mg-ff-sans: Montserrat, Avenir, sans-serif;
+}
+
+.anton {
+  font-family: Anton;
+}
+
 /*
-https://ghola.dev/?numColors=6&colorHex=%237c7196&secondaryColorHex=%23c8ae00&numShades=7&scaleModel=EnsureContrast&colorWheel=HandCrafted&showColorDetails=false&showContrastInfo=true&bigSwatches=true&secondaryColorChecked=false
+https://ghola.dev/?primaryColor=%2300415D&otherColors=%23E23942%2C%237E7A78%3AGray&compact=false#
  */
 
-  
 :root {
 
+  --mg-blue-100: #00080C;
+  --mg-blue-200: #000E14;
+  --mg-blue-300: #001D29;
+  --mg-blue-400: #003045;
+  --mg-blue-500: #00415d;
+  --mg-blue-600: #09B5FF;
+  --mg-blue-700: #86DBFF;
+  --mg-blue-800: #D9F4FF;
+  --mg-blue-900: #F7FCFF;
 
-  --mg-blue-100: #151122; /* Vulcan */
-  --mg-blue-200: #201a34; /* Mirage */
-  --mg-blue-300: #201b35; /* Mirage */
-  --mg-blue-500: #9083c0; /* Lavender Purple */
-  --mg-blue-600: #cec8e3; /* Prelude */
-  --mg-blue-700: #f3f1f8; /* Whisper */
-  --mg-blue-800: #fcfcfd; /* Athens Gray */
+  --mg-red-100: #200506;
+  --mg-red-200: #36080A;
+  --mg-red-300: #6D1015;
+  --mg-red-400: #B71B23;
+  --mg-red-500: #e23942;
+  --mg-red-600: #EE8A8F;
+  --mg-red-700: #F7C6C8;
+  --mg-red-800: #FCEDEE;
+  --mg-red-900: #FEFBFB;
 
-  --mg-gray-100: #1a1a1a; /* Cod Gray */
-  --mg-gray-200: #272727; /* Mine Shaft */
-  --mg-gray-300: #282828; /* Mine Shaft */
-  --mg-gray-500: #a1a1a1; /* Silver Chalice */
-  --mg-gray-600: #d5d5d5; /* Alto */
-  --mg-gray-700: #f5f5f5; /* Wild Sand */
-  --mg-gray-800: #fcfcfc; /* Alabaster */
+  --mg-gray-100: #101010;
+  --mg-gray-200: #1C1B1A;
+  --mg-gray-300: #373635;
+  --mg-gray-400: #5D5A59;
+  --mg-gray-500: #7E7A78;
+  --mg-gray-600: #B3B0AF;
+  --mg-gray-700: #DAD8D8;
+  --mg-gray-800: #F3F3F3;
+  --mg-gray-900: #FCFCFC;
 }
 
 input:focus, button:focus {
-  border-color: var(--mg-purple-600);
+  border-color: var(--mg-blue-600);
 }
 
 input.bg-white:focus {
   background-color: var(--mg-white-ish);
 }
 
-.bg-purple-lightest-gradient {
-  background: linear-gradient(var(--mg-purple-900),var(--mg-white-ish));
+.bg-blue-900-gradient {
+  background: linear-gradient(var(--mg-blue-900),var(--mg-white-ish));
 }
-.bg-purple-darkest-gradient {
-  background: linear-gradient(var(--mg-purple-100),var(--mg-purple-200));
+.bg-blue-400-gradient {
+  background: linear-gradient(var(--mg-blue-200),var(--mg-blue-400));
 }
 
-svg.purple-300 {
-  stroke: var(--mg-purple-300);
-  fill: var(--mg-purple-300);
+svg.blue-400 {
+  stroke: var(--mg-blue-400);
+  fill: var(--mg-blue-400);
 }
 
 .sr-only {
