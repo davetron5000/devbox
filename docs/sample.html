@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <meta name="description" content="lh-copy mv-1 mh-0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta property="og:title" content="Sample Chapter from the book “Sustainable Dev Environments with Docker and Bash”">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://devbox.computer/sample.html">
+
+  <meta itemprop="ai-content-declaration:version" content="1.0.0">
+  <meta itemprop="ai-content-declaration:level" content="none">
+
+
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.png">
+
+  <link rel="stylesheet" href="css/melange.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#fafafa">
+</head>
+
+<body class="ff-sans bg-white blue-400">
+  <header class="mh-auto blue-400 mv-3 bg-white">
+    <div class="dfr">
+      <div class="ph-2 db-l flex flex-column items-center">
+
+        <a href="/" class="tdn">
+        <img class="f-l-l w-6 ph-2" src="/images/BookMockups-512.jpg">
+        </a>
+        <h1 class="f-6 f-7-l tl-l tc lh-title ma-0 anton">
+          Sustainable Dev Environments
+        </h1>
+        <h2 class="f-5 f-5-l ma-0 mb-2 tl-l tc lh-title fw-normal anton">
+          <span class="fw-3 f-3 f-4-l">with</span> Docker and Bash
+        </h2>
+      </div>
+    </div>
+    <h3 class="bg-red-500 white pv-3 f-3 f-4-l mt-1 mb-3 tl-l tc lh-title fw-normal tracked ttu flex justify-center justify-start-l">
+      <div class="dn db-l w-6 mh-2"></div>
+      <div>
+        Sample Chapter
+      </div>
+    </h3>
+    <h4 class="f-2 f-3-l ma-0 tl-l tc lh-title ttu fw-5 flex justify-center justify-start-l">
+      <div class="dn db-l w-6 mh-2"></div>
+      <div>
+        From a <span class="fw-3">Book</span> by <span class="dib">David Bryant Copeland</span>
+      </div>
+    </h4>
+    <nav class="flex flex-column items-center gap-3 mv-4">
+      <a href="https://sowl.co/bhKWwy"
+         class="db br-5 fw-3 f-3 w-50-m w-30-ns w-90 mh-auto tc ph-1 pv-2 tdn ba bc-blue-400 bg-blue-400 blue-900">
+        Buy Now $19.99
+      </a>
+      <div>
+      <a href="#paperback"
+         class="blue-300 f-2">
+        Paperback Coming Soon!
+      </a>
+      <sup><a class="blue-300" href="#paperback">&dagger;</a></sup>
+      </div>
+    </nav>
+  </header>
+  <main class="shadow-2">
+    <div class="flex justify-center">
+      <article id="title" class="pv-3 ff-serif measure flex flex-column items-end gap-2 ph-2">
+        <h2 class="ff-sans self-start f-5-ns f-4 fw-6 lh-title ma-0 mt-3-ns">The Four Types of Dev Environments</h2>
+        <h3 class="ff-sans self-start f-4-ns f-3 fw-3 lh-title ma-0 mb-3-ns ttl tracked-tight i">Sample Chapter</h3>
+        <blockquote class="f-1 i br-2 pa-2 pa-3-ns ba bg-gray-900 gray-300 bc-gray-800 measure-narrow-ns mw-60vw  ma-0 mb-4">
+          <p class="tr lh-title">
+            Pai Mei brought Kiddo to the standing desk. On the desk was a brand new
+            computer. Kiddo tried to install the latest version of NodeJS following
+            Pai Mei’s written instructions. When it failed, she turned to her
+            master. Pai Mei only frowned.
+          </p>
+          <p class="tr lh-title">
+            Kiddo, unsure how to proceed, said “Master, how am I to install software onto my computer?”
+          </p>
+          <p class="tr lh-title">
+            Pai Mei, enraged, smashed her knuckles with the end of his staff.
+            “<em>Your</em> computer?”
+          </p>
+          <p class="tr lh-title">
+            Cradling her bruised hand, Kiddo cried: “Master, is it not mine?!”
+          </p>
+          <p class="tr lh-title">
+            Pai Mei, still enraged, again smashed Kiddo’s hand with his staff. After
+            a single stroke of his long, white beard, he simply grumbled and glared
+            at Kiddo.
+          </p>
+          <p class="tr lh-title">
+            Kiddo’s eyes dropped as she looked back at the computer. Her gnarled
+            fingers could barely enter the search terms into the operating system
+            vendor’s support site. In that moment, she was enlightened.
+          </p>
+          <footer class="tr lh-title">—Kill Bill, Vol 3</footer>
+        </blockquote>
+        <p class="lh-copy mv-1 mh-0">
+          While there are actually an <em>infinite</em> number of dev environments, any
+          given setup can be categorized along two axes, to give us four broad
+          categories. This chapter explains why one of these is superior to the
+          others.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          First, a dev environment is categorized based on the instructions for
+          setting it up: documentation on one side and automation on the other.
+          I’d bet most environments you’ve used were heavy on documentation and
+          light on automation.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          The second axis relates to how the environment is run. Is it
+          native—running everything directly on the developer’s workstation—or
+          virtual—running in the cloud or a virtual environment?
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          What we’re building in this book is the best of the four options:
+          automated and virtualized. Let’s talk through why automation is better
+          than documentation and virtualization is better than native.
+        </p>
+        <h3 class="self-start ff-serif f-4 fw-bold lh-title mt-3 mb-0">The Best Documentation is an <span class="dib">Executable Script</span></h3>
+        <p class="lh-copy mv-1 mh-0">
+          Documentation is cheap to produce, especially if it isn’t maintained or
+          well-written. It’s often better than nothing, so most teams start their
+          journey to a sustainable dev environment with a Markdown file or a wiki
+          that outlines what you need to do to get set up. This does not scale. At
+          all.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          It’s extremely hard to write good documentation. It’s harder when what
+          you are documenting is complex, which happens when your software
+          installation system has to accommodate several package managers,
+          operating systems, hardware architectures, and Pat, who insists on
+          building everything from source.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          Of course, even if you could achieve this, how is this documentation
+          maintained? For dev environments, the new hires are usually charged with
+          updating it when they find it doesn’t work. Over time, the steps become
+          so convoluted that not even the most conscientious person can follow
+          them.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          <strong>Automation solves this.</strong> Automation shows exactly what has to happen
+          because it makes it happen. Automation either works or doesn’t. Even
+          though automation feels expensive to produce, it saves time the more
+          it’s used.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          Automation has two further advantages. First, developers already possess
+          the skills to produce it, whereas they may or may not be good at
+          writing. Second, automation can be tested. A script that sets up a
+          working dev environment can be used to setup an environment for
+          continuous integration, thus ensuring that the team is aware of issues
+          quickly, and can fix them just as quickly.
+        </p>
+        <h3 class="self-start ff-serif f-4 fw-bold lh-title mt-3 mb-0">Our Computers are Increasingly Not Under Our Control</h3>
+        <p class="lh-copy mv-1 mh-0">
+          If you happen to be a Ruby developer who uses a Mac, you’ve no-doubt
+          experienced the yearly problem when macOS releases an update and you can
+          no longer install Ruby. Macs have long-since stopped shipping with a
+          reasonable version of Ruby, and you certainly can’t install gems (Ruby’s
+          form of third-party libraries) without breaking something.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          This is not something unique to Apple. Every OS vendor, in their quest
+          for stability, will take great strides to prevent changes to what is
+          considered the &quot;system software&quot;. If some script depends on a particular
+          version of Perl, and you change that version, you could break the
+          operating system.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          Of course, it’s not just the operating system vendor. Many companies
+          have IT and security teams tasked with preventing security incidents. A
+          critical tool in doing so is to force operating system and software
+          updates to the employees. These teams aren’t always capable or
+          incentivized to work with developers to ensure such updates won’t impact
+          their ability to work. Even if they did, at the end of the day, security
+          updates are going to be more important.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          The reality is that we don’t really own all the software on our
+          computers, and that we can’t easily understand how the various libraries
+          and tools that come with it are affected by the libraries and tools we
+          need to do our work.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          <strong>Virtualization solves this.</strong> As long as your computer can run the
+          virtualization software, you can run a virtual machine configured
+          exactly how you like, and it won’t change out from under you. <em>And</em> your
+          entire team can use that exact same version, even though said team might
+          be using a myriad of different computers and operating systems.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          Virtualization <em>does</em> come with potentially worse performance than
+          running natively, but this is a worthwhile trade-off (and the
+          performance gap is always shrinking). I would be willing to bet that the
+          time spent waiting for slightly slower tests is far outweighed by the
+          time saved not wrestling with some arcane compiler flags every time
+          something changes in your OS.
+        </p>
+        <h3 class="self-start ff-serif f-4 fw-bold lh-title mt-3 mb-0">Automation and Virtualization Lead to Sustainability</h3>
+        <p class="lh-copy mv-1 mh-0">
+          An automated dev environment, based on virtualized operating systems,
+          provides a solid foundation for building just about any app. The
+          automation is never out of date, and the operating system can be kept
+          stable.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          Eschewing virtualization requires automating the set up of a developer
+          laptop. While this is better than a documentation-based approach, it’s
+          still highly complex. The automation must account for all operating
+          systems and hardware.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          When automating developer workstation setup, the team must either
+          maintain that system themselves or rely on a third party. Whatever
+          preconceived notions you may have about Docker, I can assure you that
+          it’s simpler to have Docker install software than to write a script that
+          must work across many different OSes and hardware profiles.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          As for third party solutions, they have to get installed themselves
+          <em>and</em> the team must understand how they work to debug or enhance them.
+          This turns out to be more difficult than learning a commonly-used tool
+          like Docker. We’ll talk about this in the chapter “Tech Companies Should Not Own Your Dev Environment”.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          On the other side, using a virtualized environment with documented
+          instructions can be helpful, but you still fall victim to the trappings
+          of documentation. Your docs might be simpler, since they can address the
+          virtualized environment only, but they will still fall out of date.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          We’re going to use Docker for virtualization, and a combination of
+          Docker and Bash for automation. The reasons have to do with a hidden,
+          third axis: how easy is it to understand the abstractions on which your
+          dev environment is built?
+        </p>
+        <h3 class="self-start ff-serif f-4 fw-bold lh-title mt-3 mb-0">You Must Always Understand One Level Below the Current Abstraction</h3>
+        <p class="lh-copy mv-1 mh-0">
+          The best abstractions are borne from repeated applications of a
+          technology for a well-defined use-case. Writing assembly language gets
+          tiresome, so C was invented. Even though assembly can do far more than
+          C, for most common use-cases, C is much faster and easier to use. It’s a
+          great abstraction.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          If you learn C and not assembly, you will eventually hit a limit. You
+          won’t know exactly what problem C was created to solve and, eventually,
+          there will be a problem that your knowledge of C alone cannot solve. You
+          will need to learn a bit of assembly.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          Your dev environment is the same way. Whatever mechanism you use to
+          manage it, it is ultimately an abstraction on top of other technologies
+          that are being orchestrated to manage your environment. When something
+          goes wrong—either due to a bug or an unforeseen use case—you’ll need
+          to pop the hood and see what’s under there.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          Thus, you need to understand—or be able to get an understanding
+          of—whatever your dev environment is built on, as shown below.
+        </p>
+        <figure class="self-center ba bc-gray-700 pa-4 br-2 shadow-1">
+          <img class="w-7-ns w-6"
+               src="/images/abstractions-512.png"
+               alt="Diagram showing three boxes. The top-most box says 'Dev Environment' and is labeled 'You have to know this to do work'. It points to the second box, which says 'Dev Tools & Libraries' and is labeled 'You must understand or be able to learn this when needed'.  The second box points to a third box which says 'Possibly a turtle'. That third box is labeled 'Highly unlikely you will need to figure this out'." >
+          <figcaption class="f-1 i tc mt-3">
+            Layers of Abstractions. <a class="blue-400" href="/images/abstractions.png" target="_blank">View a full size version</a>
+          </figcaption>
+        </figure>
+        <p class="lh-copy mv-1 mh-0">
+          What <em>this</em> means is that your dev environment should use technologies
+          that you either do, or can, understand. Applying this to your team, this
+          also implies that there is more value in using commonly-understood,
+          battle-tested technologies than in using something that might tick off
+          more features but is more esoteric or less likely to continue to exist
+          past its next round of funding.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          Docker—despite being VC-funded itself—is prolific. A <em>lot</em> of people
+          understand it, and it’s not going anywhere. There are even competing
+          products that can build Docker images and run Docker containers.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          And Bash...well...Bash will outlive us all. The only better investment
+          in your career than learning Bash is learning SQL and if there were a
+          way to automate all this with SQL, I’d <em>definitely</em> be considering it.
+        </p>
+        <p class="lh-copy mv-1 mh-0">
+          To that end, we’ll now start our journey to learn this stuff. It’s not
+          going to take too long. We’ll start with Docker, which, despite some
+          warts and a few design flaws, is the best tool for the job of
+          virtualizing our dev environment.
+        </p>
+        <div aria-hidden class="tc w-100 f-4 mt-3">&sect;</div>
+      </article>
+    </div>
+    <nav class="flex flex-column items-center gap-3 pv-3">
+      <a href="https://sowl.co/bhKWwy"
+         class="db br-5 fw-3 f-3 w-50-m w-30-ns w-90 mh-auto tc ph-1 pv-2 tdn ba bc-blue-400 bg-blue-400 blue-900">
+        Continue Reading for $19.99
+      </a>
+      <div>
+        <a href="#paperback"
+           class="blue-300 f-2">
+          Paperback Coming Soon!
+        </a>
+        <sup><a class="blue-300" href="#paperback">&dagger;</a></sup>
+      </div>
+    </nav>
+  </main>
+  <footer class="bg-blue-300 bg-blue-400-gradient blue-900 pa-3">
+    <a class="ph-2 measure db mh-auto lh-copy f-2 blue-800" href="mailto:davec@naildrivin5.com">Contact Me</a>
+    <p class="measure ph-2 mh-auto">
+      <span class="f-1 lh-copy mv-1 mh-0">
+      This website and book are Copyright &copy; 2024 by David Bryant Copeland, All Rights Reserved.  The book was produced without <a class="blue-900" href="http://declare-ai.org/1.0.0/none.html">no assistance from a Generative AI</a>.
+      </span>
+    
+</p>
+  </footer>
+</body>
+
+</html>
