@@ -5,9 +5,15 @@ services:
     init: true
     volumes:
       - type: bind
-        source: "./"
-        target: "/root/work"
+        source: ${PWD}
+        target: ${PWD}
         consistency: "consistent"
-    entrypoint: /root/show-help-in-app-container-then-wait.sh
-    working_dir: /root/work
+      # Add more volumes here - note that /home/appuser is the home dir
+    entrypoint: /home/appuser/show-help-in-app-container-then-wait.sh
+    working_dir: ${PWD}
+    environments:
+      TERM: ${TERM}
+      PROJECT_ROOT: ${PWD}
+    # Add ports here
+
 

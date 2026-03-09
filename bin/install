@@ -11,7 +11,6 @@ DX_RELATIVE_DIR=dx
 COMPOSE_TEMPLATE=$(realpath "${SCRIPT_DIR}"/../templates/docker-compose.template.yml)
 COMPOSE_ENV_TEMPLATE=$(realpath "${SCRIPT_DIR}"/../templates/docker-compose.template.env)
 
-
 main() {
   PROJECT_ROOT=
   BASE_IMAGE=
@@ -20,8 +19,6 @@ main() {
   TAG=
   PORT=none
   args=()
-  snippets=()
-  services=()
   parse_command_line "${@}"
 
   PROJECT_DX_DIR="${PROJECT_ROOT}"/"${DX_RELATIVE_DIR}"
@@ -30,11 +27,12 @@ main() {
   PROJECT_COMPOSE_ENV="${PROJECT_DX_DIR}"/docker-compose.env
 
   setup_project_dir_if_needed
-  parse_services_and_snippets "${args[@]}"
-  create_dockerfile "${PROJECT_DOCKERFILE}" "${BASE_IMAGE}" "${snippets[@]}"
-  create_docker_compose "${PROJECT_COMPOSE_FILE}" "${COMPOSE_TEMPLATE}" "${PORT}" "${services[@]}"
+  create_dockerfile "${PROJECT_DOCKERFILE}" "${BASE_IMAGE}"
+  create_docker_compose "${PROJECT_COMPOSE_FILE}" "${COMPOSE_TEMPLATE}" "${PORT}"
   copy_dx_scripts "${LOCAL_DX_SCRIPTS_DIR}" "${PROJECT_DX_DIR}"
   create_docker_compose_env "${COMPOSE_ENV_TEMPLATE}" "${PROJECT_COMPOSE_ENV}" "${PROJECT_NAME}" "${ORG}" "${TAG}"
+  setup_other_files "${PROJECT_DX_DIR}"
+
 }
 
 setup_project_dir_if_needed() {
@@ -45,73 +43,76 @@ setup_project_dir_if_needed() {
     log "✅" "Project root already exists at '${PROJECT_ROOT}'"
   fi
 
-  require_not_exist "${PROJECT_DX_DIR}"        "Dockbox is already installed in ${PROJECT_ROOT}, since it has a dx/ directory"
+  require_not_exist "${PROJECT_DX_DIR}"        "Devbox is already installed in ${PROJECT_ROOT}, since it has a dx/ directory"
   require_not_exist "${PROJECT_DOCKERFILE}"    "${PROJECT_DOCKERFILE} already exists. Something may be wrong. Aborting"
   require_not_exist "${PROJECT_COMPOSE_FILE}"  "${PROJECT_COMPOSE_FILE} already exists. Something may be wrong. Aborting"
 
 }
 
-parse_services_and_snippets() {
-  unknown=()
-
-  # shellcheck disable=SC2125
-  is_snippet=*.dockerfile-snippet
-  # shellcheck disable=SC2125
-  is_service=*.docker-compose-service.yml
-
-  for file in "${@}"; do
-    # shellcheck disable=SC2254
-    case "$file" in
-      $is_snippet)
-        snippets+=("$file")
-        ;;
-      $is_service)
-        services+=("$file")
-        ;;
-      *)
-        unknown+=("$file")
-        ;;
-    esac
-  done
-  if [ "${#unknown[@]}" -gt 0 ]; then
-    fatal "Some files are not Dockerfile snippets nor Docker Compose services: ${unknown[*]}"
-  fi
-}
-
 create_dockerfile() {
   dockerfile="$1"
   base_image_name="$2"
-  snippets=("${@:3}")
   log "🐳" "Making the Dockerfile ${dockerfile} with base image ${base_image_name}"
 
   echo "FROM ${base_image_name}" > "${dockerfile}"
   {
     echo
-    echo "ENV DEBIAN_FRONTEND noninteractive"
-    echo "RUN apt-get -y update"
+    echo "ENV DEBIAN_FRONTEND=noninteractive"
+    echo "RUN apt-get --yes update"
     echo
+    echo "# Add more base libraries and cli apps here"
+    echo "RUN apt-get install --yes \\"
+    echo "      --no-install-recommends \\"
+    echo "      ca-certificates \\"
+    echo "      curl \\"
+    echo "      git \\"
+    echo "      jq \\"
+    echo "      openssh-client"
   } >> "${dockerfile}"
 
-  for snippet in "${snippets[@]}"; do
-    log "🧩" "Adding snippet ${snippet}"
-    {
-      echo
-      echo "# dx.snippet.start=${snippet}"
-      grep -v "^# vim:" "${snippet}" | \
-        sed "s/# dx.source=/# Based on documentation at /g" | \
-        sed "s/# dx.stability=vendor/# based on the vendor's documentation/g" | \
-        sed "s/# dx.stability=debian/# based on Debian's packaging/g" | \
-        sed "s/# dx.stability=/# stable based on /g"
-      echo "# dx.snippet.end=${snippet}"
-      echo
-    } >> "${dockerfile}"
-  done
+  echo "# Insert any additional setup that must be done as root here" >> "${dockerfile}"
+  {
+    echo "# Setup a non-root user"
+    echo ""
+    echo "# Their user id, which ideally matches their user id on the host"
+    echo "ARG user_uid=10001"
+    echo "# Their group id, which ideally matches their group id on the host"
+    echo "ARG user_gid=10002"
+    echo "# The group id that can access /var/run/docker.sock on the host."
+    echo "# If this isn't mapped properly, no docker-out-of-docker commands will work"
+    echo "ARG docker_gid=10003"
+    echo "# Can be set to ',0' in order to add the user to root's group"
+    echo "ARG sadly_user_must_be_added_to_root="
+    echo ""
+    echo "# Create the user's group ID if it does not exist"
+    echo "RUN getent group ${user_gid} || groupadd --gid ${user_gid} appgroup"
+    echo "# Create the docker group id if it does not exist"
+    echo "RUN getent group ${docker_gid} || groupadd --gid ${docker_gid} hostdocker"
+    echo "# Create the user. Note that we put bash_customizations in both .profile and .bashrc"
+    echo "# to increase the chances they are used when running bash in various configurations"
+    echo "RUN useradd --uid ${user_uid} --gid ${user_gid} --groups ${sadly_user_must_be_added_to_root}${docker_gid} --create-home --home-dir /home/appuser appuser && \\"
+    echo "    echo '. ~/.bash_customizations' >> /home/appuser/.profile && \\"
+    echo "    echo '. ~/.bash_customizations.local' >> /home/appuser/.profile && \\"
+    echo "    echo '. ~/.bash_customizations' >> /home/appuser/.bashrc && \\"
+    echo "    echo '. ~/.bash_customizations.local' >> /home/appuser/.bashrc && \\"
+    echo "    mkdir -p /home/appuser/.local/bin && \\"
+    echo "    chown -R appuser:appgroup /home/appuser/.local"
+    echo ""
+    echo "COPY --chown=appuser:${user_gid} dx/show-help-in-app-container-then-wait.sh /home/appuser"
+    echo "COPY --chown=appuser:${user_gid} dx/bash_customizations /home/appuser/.bash_customizations"
+    echo "COPY --chown=appuser:${user_gid} dx/bash_customizations.local /home/appuser/.bash_customizations.local"
+    echo ""
+    echo "# NOT including the group here as that will place the user's environment"
+    echo "# ONLY in that group and not in all the groups in which they are a part."
+    echo "USER appuser"
+    echo ""
+  } >> "${dockerfile}"
 
   {
-    echo "# This entrypoint produces a nice help message and waits around for you to do"
-    echo "# something with the container."
-    echo "COPY ${DX_RELATIVE_DIR}/show-help-in-app-container-then-wait.sh /root"
+    echo "RUN echo 'SET UP GIT' ; exit 1 ; git config --global user.email 'YOUR EMAIL' && \\"
+    echo "    git config --global user.name 'YOUR EMAIL'"
   } >> "${dockerfile}"
+
   log "✅" "${dockerfile} created"
 }
 
@@ -119,7 +120,6 @@ create_docker_compose() {
   compose_file="$1"
   template="$2"
   port="$3"
-  services=("${@:4}")
 
   log "🐋" "Making ${compose_file}"
 
@@ -133,21 +133,6 @@ create_docker_compose() {
       echo
     } >> "${compose_file}"
   fi
-
-  for service in "${services[@]}"; do
-    log "🖥️" "Adding service ${service}"
-    {
-      echo
-      echo "# dx.service.start=${service}"
-      grep -v "^# vim:" "${service}" | \
-        sed "s/# dx.source=/# Based on documentation at /g" | \
-        sed "s/# dx.stability=vendor/# managed by the vendor/g" | \
-        sed "s/# dx.stability=docker/# managed by Docker/g" | \
-        sed "s/# dx.stability=/# managed by /g"
-      echo "# dx.service.end=${service}"
-      echo
-    } >> "${compose_file}"
-  done
 
   log "✅" "${compose_file} created"
 }
@@ -164,6 +149,58 @@ create_docker_compose_env() {
   log "🎚️" "Initializing ${project_compose_env}"
   sed "s^%%PROJECT_NAME%%^${project_name}^g" "${compose_env_template}" | sed "s^%%IMAGE%%^${image_name}^g" > "${project_compose_env}"
   log "✅" "${project_compose_env} is ready"
+}
+
+setup_other_files() {
+  project_dx_dir="$1"
+
+  BASH_CUSTOMIZATIONS="${project_dx_dir}/bash_customizations"
+  BASH_CUSTOMIZATIONS_LOCAL="${project_dx_dir}/bash_customizations.local"
+  CREDENTIALS_DIR="${project_dx_dir}/credentials"
+  STATE_DIR="${project_dx_dir}/state"
+
+  require_not_exist "${BASH_CUSTOMIZATIONS}"  "${BASH_CUSTOMIZATIONS} already exists. Something may be wrong. Aborting"
+  require_not_exist "${BASH_CUSTOMIZATIONS_LOCAL}"  "${BASH_CUSTOMIZATIONS_LOCAL} already exists. Something may be wrong. Aborting"
+
+  {
+    echo "# Bash/Shell customizations that are applicable to everyone."
+    echo "# This is where you'd setup NPM, RubyGems, or other package managers to"
+    echo "# install things how you'd like"
+    echo "if [ ! -n \"$PROJECT_ROOT\" ]; then"
+    echo "  echo \"[ bash_customizations ] WARNING: PROJECT_ROOT is not set - this will break various package managers\""
+    echo "fi"
+    echo "export PATH=${PATH}:/home/appuser/.local/bin"
+  } > ${BASH_CUSTOMIZATIONS}
+  {
+    echo "# Insert developer-specifilc Bash customizations here."
+    echo "# This file is not checked into version control"
+    echo "# Sets up a multi-line prompt since the working directory"
+    echo "# may be very deep.  Customize or change at your leisure."
+    echo "PS1='\[\e[35m\]docker-container\[\e[0m\] - \[\e[37m\]\w\n\[\e[0m\]> '"
+    echo "set -o vi"
+  } > ${BASH_CUSTOMIZATIONS_LOCAL}
+
+  mkdir -p "${CREDENTIALS_DIR}"
+  {
+    echo "Place or symlink any secrets or credentials that are needed"
+    echo "inside the Docker container.  Depending on what they are, you will"
+    echo "then mount or copy these into the container"
+    echo "NOTE that you should not push your images since the secrets will be"
+    echo "copied into them."
+    echo ""
+    echo "Organize this folder however you like"
+  } > ${CREDENTIALS_DIR}/README
+
+  mkdir -p "${STATE_DIR}"
+  {
+    echo "Place or symlink any configuration or state that exists"
+    echo "on your computer that should be accessible inside the container"
+    echo "then mount or copy these into the container"
+    echo "NOTE that you should not push your images since potentially sensitive"
+    echo "data will be copied into them."
+    echo ""
+    echo "Organize this folder however you like"
+  } > ${STATE_DIR}/README
 }
 
 
@@ -243,13 +280,13 @@ usage() {
       echo
     fi
   fi
-  echo "usage: $0 [-h] [-p project_name] [-o org] [-t tag] [-a path_to_app] [-i base_image] [snippets and services]"
+  echo "usage: $0 [-h] [-p project_name] [-o org] [-t tag] [-a path_to_app] [-i base_image]"
   if [ -n "${error_message}" ]; then
     if [ "${error_message}" = "DETAILED" ]; then
       echo
       echo "DESCRIPTION"
       echo
-      echo "    Initializes your project with Dockbox. This will create a Dockerfile and"
+      echo "    Initializes your project with Devbox. This will create a Dockerfile and"
       echo "    a Docker Compose file to run your project"
       echo
       echo "OPTIONS"
@@ -261,10 +298,6 @@ usage() {
       echo "    -o - the name of your project's org on DockerHub (or GitHub)"
       echo "    -p - the port on which your project runs. If omitted, no port will be exposed"
       echo "    -t - a tag to use for your development container.  Defaults to the base_image name"
-      echo
-      echo "    snippets and services - any number of files containing snippets or services to include in your project. The"
-      echo "                            snippets will be added to the Dockerfile in the order given.  The services"
-      echo "                            will be added to the Docker Compose file"
     fi
   fi
   exit 1
