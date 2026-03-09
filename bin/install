@@ -18,7 +18,6 @@ main() {
   ORG=
   TAG=
   PORT=none
-  args=()
   parse_command_line "${@}"
 
   PROJECT_DX_DIR="${PROJECT_ROOT}"/"${DX_RELATIVE_DIR}"
@@ -54,8 +53,8 @@ create_dockerfile() {
   base_image_name="$2"
   log "🐳" "Making the Dockerfile ${dockerfile} with base image ${base_image_name}"
 
-  echo "FROM ${base_image_name}" > "${dockerfile}"
   {
+    echo "FROM ${base_image_name}"
     echo
     echo "ENV DEBIAN_FRONTEND=noninteractive"
     echo "RUN apt-get --yes update"
@@ -68,10 +67,11 @@ create_dockerfile() {
     echo "      git \\"
     echo "      jq \\"
     echo "      openssh-client"
-  } >> "${dockerfile}"
+  } > "${dockerfile}"
 
-  echo "# Insert any additional setup that must be done as root here" >> "${dockerfile}"
   {
+    echo "# Insert any additional setup that must be done as root here"
+    echo 
     echo "# Setup a non-root user"
     echo ""
     echo "# Their user id, which ideally matches their user id on the host"
@@ -85,12 +85,12 @@ create_dockerfile() {
     echo "ARG sadly_user_must_be_added_to_root="
     echo ""
     echo "# Create the user's group ID if it does not exist"
-    echo "RUN getent group ${user_gid} || groupadd --gid ${user_gid} appgroup"
+    echo "RUN getent group \${user_gid} || groupadd --gid \${user_gid} appgroup"
     echo "# Create the docker group id if it does not exist"
-    echo "RUN getent group ${docker_gid} || groupadd --gid ${docker_gid} hostdocker"
+    echo "RUN getent group \${docker_gid} || groupadd --gid \${docker_gid} hostdocker"
     echo "# Create the user. Note that we put bash_customizations in both .profile and .bashrc"
     echo "# to increase the chances they are used when running bash in various configurations"
-    echo "RUN useradd --uid ${user_uid} --gid ${user_gid} --groups ${sadly_user_must_be_added_to_root}${docker_gid} --create-home --home-dir /home/appuser appuser && \\"
+    echo "RUN useradd --uid \${user_uid} --gid \${user_gid} --groups \${sadly_user_must_be_added_to_root}\${docker_gid} --create-home --home-dir /home/appuser appuser && \\"
     echo "    echo '. ~/.bash_customizations' >> /home/appuser/.profile && \\"
     echo "    echo '. ~/.bash_customizations.local' >> /home/appuser/.profile && \\"
     echo "    echo '. ~/.bash_customizations' >> /home/appuser/.bashrc && \\"
@@ -98,9 +98,9 @@ create_dockerfile() {
     echo "    mkdir -p /home/appuser/.local/bin && \\"
     echo "    chown -R appuser:appgroup /home/appuser/.local"
     echo ""
-    echo "COPY --chown=appuser:${user_gid} dx/show-help-in-app-container-then-wait.sh /home/appuser"
-    echo "COPY --chown=appuser:${user_gid} dx/bash_customizations /home/appuser/.bash_customizations"
-    echo "COPY --chown=appuser:${user_gid} dx/bash_customizations.local /home/appuser/.bash_customizations.local"
+    echo "COPY --chown=appuser:\${user_gid} dx/show-help-in-app-container-then-wait.sh /home/appuser"
+    echo "COPY --chown=appuser:\${user_gid} dx/bash_customizations /home/appuser/.bash_customizations"
+    echo "COPY --chown=appuser:\${user_gid} dx/bash_customizations.local /home/appuser/.bash_customizations.local"
     echo ""
     echo "# NOT including the group here as that will place the user's environment"
     echo "# ONLY in that group and not in all the groups in which they are a part."
@@ -170,15 +170,15 @@ setup_other_files() {
     echo "  echo \"[ bash_customizations ] WARNING: PROJECT_ROOT is not set - this will break various package managers\""
     echo "fi"
     echo "export PATH=${PATH}:/home/appuser/.local/bin"
-  } > ${BASH_CUSTOMIZATIONS}
+  } > "${BASH_CUSTOMIZATIONS}"
   {
     echo "# Insert developer-specifilc Bash customizations here."
     echo "# This file is not checked into version control"
     echo "# Sets up a multi-line prompt since the working directory"
     echo "# may be very deep.  Customize or change at your leisure."
-    echo "PS1='\[\e[35m\]docker-container\[\e[0m\] - \[\e[37m\]\w\n\[\e[0m\]> '"
+    echo "PS1='\\[\\e[35m\\]docker-container\\[\\e[0m\\] - \\[\\e[37m\\]\\w\\n\\[\\e[0m\\]> '"
     echo "set -o vi"
-  } > ${BASH_CUSTOMIZATIONS_LOCAL}
+  } > "${BASH_CUSTOMIZATIONS_LOCAL}"
 
   mkdir -p "${CREDENTIALS_DIR}"
   {
@@ -189,7 +189,7 @@ setup_other_files() {
     echo "copied into them."
     echo ""
     echo "Organize this folder however you like"
-  } > ${CREDENTIALS_DIR}/README
+  } > "${CREDENTIALS_DIR}/README"
 
   mkdir -p "${STATE_DIR}"
   {
@@ -200,7 +200,7 @@ setup_other_files() {
     echo "data will be copied into them."
     echo ""
     echo "Organize this folder however you like"
-  } > ${STATE_DIR}/README
+  } > "${STATE_DIR}/README"
 }
 
 
@@ -269,7 +269,6 @@ parse_command_line() {
     TAG=${BASE_IMAGE//:/-}
     log "🧐" "Assuming tag is '${TAG}' - use -t to this script if you want to do something else"
   fi
-  args=("${@}")
 }
 
 usage() {
