@@ -87,7 +87,7 @@ create_dockerfile() {
   echo "FROM ${base_image_name}" > "${dockerfile}"
   {
     echo
-    echo "ENV DEBIAN_FRONTEND noninteractive"
+    echo "ENV DEBIAN_FRONTEND=noninteractive"
     echo "RUN apt-get -y update"
     echo
   } >> "${dockerfile}"
@@ -243,7 +243,7 @@ usage() {
       echo
     fi
   fi
-  echo "usage: $0 [-h] [-p project_name] [-o org] [-t tag] [-a path_to_app] [-i base_image] [snippets and services]"
+  echo "usage: $0 [-h] [-n project_name] [-o org] [-t tag] [-a path_to_app] [-i base_image] [-p port] [snippets and services]"
   if [ -n "${error_message}" ]; then
     if [ "${error_message}" = "DETAILED" ]; then
       echo
