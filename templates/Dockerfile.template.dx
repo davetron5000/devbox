@@ -26,10 +26,11 @@ RUN --mount=type=cache,target=/var/cache/apt \
     apt-get install --quiet --yes --no-install-recommends \
       ca-certificates \
       curl \
+      git \
       gnupg \
       lsb-release \
-      postgresql-common  \
       rsync \
+      openssh-client \
       vim
 
 # Up to now, RUN directives ran as the root user.  When using this container
