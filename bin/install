@@ -79,8 +79,6 @@ create_dockerfile() {
   sed "s^%%BASE_IMAGE%%^${base_image_name}^g" "${dockerfile_template}" | \
   sed "s^%%GIT_EMAIL%%^${git_email}^g"                                  | \
   sed "s^%%GIT_NAME%%^${git_name}^g"                                    > "${dockerfile}"
-  log "✅" "${project_compose_env} is ready"
-
   log "✅" "${dockerfile} created"
 }
 
