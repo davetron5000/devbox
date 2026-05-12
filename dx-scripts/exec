@@ -61,7 +61,7 @@ if [ "$SSH_AGENT" = "true" ]; then
   COMMAND=(ssh-agent "${COMMAND[@]}")
 fi
 
-log "🚂" "Running '${COMMAND[@]}' inside container with service name '${SERVICE}'"
+log "🚂" "Running '${COMMAND[*]}' inside container with service name '${SERVICE}'"
 
 docker \
   compose \

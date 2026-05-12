@@ -11,7 +11,7 @@ services:
       # Add more volumes here - note that /home/appuser is the home dir
     entrypoint: /home/appuser/show-help-in-app-container-then-wait.sh
     working_dir: ${PWD}
-    environments:
+    environment:
       TERM: ${TERM}
       PROJECT_ROOT: ${PWD}
     # Add ports here

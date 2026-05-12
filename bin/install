@@ -10,6 +10,9 @@ LOCAL_DX_SCRIPTS_DIR=$(realpath "${SCRIPT_DIR}"/../dx-scripts)
 DX_RELATIVE_DIR=dx
 COMPOSE_TEMPLATE=$(realpath "${SCRIPT_DIR}"/../templates/docker-compose.template.yml)
 COMPOSE_ENV_TEMPLATE=$(realpath "${SCRIPT_DIR}"/../templates/docker-compose.template.env)
+DOCKERFILE_TEMPLATE=$(realpath "${SCRIPT_DIR}"/../templates/Docker.template.dx)
+GIT_EMAIL=$(git config --global user.email || 'your-git-email@example.com')
+GIT_NAME=$(git config --global user.name || 'Your Git Name')
 
 main() {
   PROJECT_ROOT=
@@ -18,6 +21,7 @@ main() {
   ORG=
   TAG=
   PORT=none
+
   parse_command_line "${@}"
 
   PROJECT_DX_DIR="${PROJECT_ROOT}"/"${DX_RELATIVE_DIR}"
@@ -26,15 +30,15 @@ main() {
   PROJECT_COMPOSE_ENV="${PROJECT_DX_DIR}"/docker-compose.env
 
   setup_project_dir_if_needed
-  create_dockerfile "${PROJECT_DOCKERFILE}" "${BASE_IMAGE}"
-  create_docker_compose "${PROJECT_COMPOSE_FILE}" "${COMPOSE_TEMPLATE}" "${PORT}"
-  copy_dx_scripts "${LOCAL_DX_SCRIPTS_DIR}" "${PROJECT_DX_DIR}"
+  create_dockerfile         "${DOCKERFILE_TEMPLATE}" "${PROJECT_DOCKERFILE}" "${BASE_IMAGE}" "${GIT_EMAIL}" "${GIT_NAME}"
+  create_docker_compose     "${PROJECT_COMPOSE_FILE}" "${COMPOSE_TEMPLATE}" "${PORT}"
+  copy_dx_scripts           "${LOCAL_DX_SCRIPTS_DIR}" "${PROJECT_DX_DIR}"
   create_docker_compose_env "${COMPOSE_ENV_TEMPLATE}" "${PROJECT_COMPOSE_ENV}" "${PROJECT_NAME}" "${ORG}" "${TAG}"
-  setup_other_files "${PROJECT_DX_DIR}"
 
 }
 
 setup_project_dir_if_needed() {
+  local gitignore="$PROJECT_ROOT/.gitignore"
   if [ ! -d "${PROJECT_ROOT}" ]; then
     log "📁" "Creating project root at '${PROJECT_ROOT}'"
     mkdir -p "${PROJECT_ROOT}"
@@ -45,73 +49,37 @@ setup_project_dir_if_needed() {
   require_not_exist "${PROJECT_DX_DIR}"        "Devbox is already installed in ${PROJECT_ROOT}, since it has a dx/ directory"
   require_not_exist "${PROJECT_DOCKERFILE}"    "${PROJECT_DOCKERFILE} already exists. Something may be wrong. Aborting"
   require_not_exist "${PROJECT_COMPOSE_FILE}"  "${PROJECT_COMPOSE_FILE} already exists. Something may be wrong. Aborting"
+  
+  touch "$gitignore"
+  if ! grep -qxF '/dx/customizations.local.bash' "$gitignore"; then
+    echo '# per-developer Bash configuration'
+    echo '/dx/customizations.local.bash' >> "$gitignore"
+  fi
+  if ! grep -qxF '/dx/credentials' "$gitignore"; then
+    echo '# per-developer secrets/credentials'
+    echo '/dx/credentials' >> "$gitignore"
+  fi
+  if ! grep -qxF '/dx/state' "$gitignore"; then
+    echo '# per-developer CLI state that must persist across containers'
+    echo '/dx/state' >> "$gitignore"
+  fi
+
 
 }
 
 create_dockerfile() {
-  dockerfile="$1"
-  base_image_name="$2"
+
+  local dockerfile_template="$1"
+  local dockerfile="$2"
+  local base_image_name="$3"
+  local git_email="$4"
+  local git_name="$5"
+
   log "🐳" "Making the Dockerfile ${dockerfile} with base image ${base_image_name}"
-
-  {
-    echo "FROM ${base_image_name}"
-    echo
-    echo "ENV DEBIAN_FRONTEND=noninteractive"
-    echo "RUN apt-get --yes update"
-    echo
-    echo "# Add more base libraries and cli apps here"
-    echo "RUN apt-get install --yes \\"
-    echo "      --no-install-recommends \\"
-    echo "      ca-certificates \\"
-    echo "      curl \\"
-    echo "      git \\"
-    echo "      jq \\"
-    echo "      openssh-client"
-  } > "${dockerfile}"
-
-  {
-    echo "# Insert any additional setup that must be done as root here"
-    echo 
-    echo "# Setup a non-root user"
-    echo ""
-    echo "# Their user id, which ideally matches their user id on the host"
-    echo "ARG user_uid=10001"
-    echo "# Their group id, which ideally matches their group id on the host"
-    echo "ARG user_gid=10002"
-    echo "# The group id that can access /var/run/docker.sock on the host."
-    echo "# If this isn't mapped properly, no docker-out-of-docker commands will work"
-    echo "ARG docker_gid=10003"
-    echo "# Can be set to ',0' in order to add the user to root's group"
-    echo "ARG sadly_user_must_be_added_to_root="
-    echo ""
-    echo "# Create the user's group ID if it does not exist"
-    echo "RUN getent group \${user_gid} || groupadd --gid \${user_gid} appgroup"
-    echo "# Create the docker group id if it does not exist"
-    echo "RUN getent group \${docker_gid} || groupadd --gid \${docker_gid} hostdocker"
-    echo "# Create the user. Note that we put bash_customizations in both .profile and .bashrc"
-    echo "# to increase the chances they are used when running bash in various configurations"
-    echo "RUN useradd --uid \${user_uid} --gid \${user_gid} --groups \${sadly_user_must_be_added_to_root}\${docker_gid} --create-home --home-dir /home/appuser appuser && \\"
-    echo "    echo '. ~/.bash_customizations' >> /home/appuser/.profile && \\"
-    echo "    echo '. ~/.bash_customizations.local' >> /home/appuser/.profile && \\"
-    echo "    echo '. ~/.bash_customizations' >> /home/appuser/.bashrc && \\"
-    echo "    echo '. ~/.bash_customizations.local' >> /home/appuser/.bashrc && \\"
-    echo "    mkdir -p /home/appuser/.local/bin && \\"
-    echo "    chown -R appuser:appgroup /home/appuser/.local"
-    echo ""
-    echo "COPY --chown=appuser:\${user_gid} dx/show-help-in-app-container-then-wait.sh /home/appuser"
-    echo "COPY --chown=appuser:\${user_gid} dx/bash_customizations /home/appuser/.bash_customizations"
-    echo "COPY --chown=appuser:\${user_gid} dx/bash_customizations.local /home/appuser/.bash_customizations.local"
-    echo ""
-    echo "# NOT including the group here as that will place the user's environment"
-    echo "# ONLY in that group and not in all the groups in which they are a part."
-    echo "USER appuser"
-    echo ""
-  } >> "${dockerfile}"
-
-  {
-    echo "RUN echo 'SET UP GIT' ; exit 1 ; git config --global user.email 'YOUR EMAIL' && \\"
-    echo "    git config --global user.name 'YOUR EMAIL'"
-  } >> "${dockerfile}"
+  sed "s^%%BASE_IMAGE%%^${base_image_name}^g" "${dockerfile_template}" | \
+  sed "s^%%GIT_EMAIL%%^${git_email}^g"                                  | \
+  sed "s^%%GIT_NAME%%^${git_name}^g"                                    > "${dockerfile}"
+  log "✅" "${project_compose_env} is ready"
 
   log "✅" "${dockerfile} created"
 }
@@ -151,77 +119,30 @@ create_docker_compose_env() {
   log "✅" "${project_compose_env} is ready"
 }
 
-setup_other_files() {
-  project_dx_dir="$1"
-
-  BASH_CUSTOMIZATIONS="${project_dx_dir}/bash_customizations"
-  BASH_CUSTOMIZATIONS_LOCAL="${project_dx_dir}/bash_customizations.local"
-  CREDENTIALS_DIR="${project_dx_dir}/credentials"
-  STATE_DIR="${project_dx_dir}/state"
-
-  require_not_exist "${BASH_CUSTOMIZATIONS}"  "${BASH_CUSTOMIZATIONS} already exists. Something may be wrong. Aborting"
-  require_not_exist "${BASH_CUSTOMIZATIONS_LOCAL}"  "${BASH_CUSTOMIZATIONS_LOCAL} already exists. Something may be wrong. Aborting"
-
-  {
-    echo "# Bash/Shell customizations that are applicable to everyone."
-    echo "# This is where you'd setup NPM, RubyGems, or other package managers to"
-    echo "# install things how you'd like"
-    echo "if [ ! -n \"$PROJECT_ROOT\" ]; then"
-    echo "  echo \"[ bash_customizations ] WARNING: PROJECT_ROOT is not set - this will break various package managers\""
-    echo "fi"
-    echo "export PATH=${PATH}:/home/appuser/.local/bin"
-  } > "${BASH_CUSTOMIZATIONS}"
-  {
-    echo "# Insert developer-specifilc Bash customizations here."
-    echo "# This file is not checked into version control"
-    echo "# Sets up a multi-line prompt since the working directory"
-    echo "# may be very deep.  Customize or change at your leisure."
-    echo "PS1='\\[\\e[35m\\]docker-container\\[\\e[0m\\] - \\[\\e[37m\\]\\w\\n\\[\\e[0m\\]> '"
-    echo "set -o vi"
-  } > "${BASH_CUSTOMIZATIONS_LOCAL}"
-
-  mkdir -p "${CREDENTIALS_DIR}"
-  {
-    echo "Place or symlink any secrets or credentials that are needed"
-    echo "inside the Docker container.  Depending on what they are, you will"
-    echo "then mount or copy these into the container"
-    echo "NOTE that you should not push your images since the secrets will be"
-    echo "copied into them."
-    echo ""
-    echo "Organize this folder however you like"
-  } > "${CREDENTIALS_DIR}/README"
-
-  mkdir -p "${STATE_DIR}"
-  {
-    echo "Place or symlink any configuration or state that exists"
-    echo "on your computer that should be accessible inside the container"
-    echo "then mount or copy these into the container"
-    echo "NOTE that you should not push your images since potentially sensitive"
-    echo "data will be copied into them."
-    echo ""
-    echo "Organize this folder however you like"
-  } > "${STATE_DIR}/README"
-}
-
-
 copy_dx_scripts() {
   dx_scripts="$1"
   project_dx_dir="$2"
 
   log "🗃️" "Copying dx scripts to ${project_dx_dir}"
   mkdir -p "${project_dx_dir}"
-  cp "${dx_scripts}"/* "${project_dx_dir}"
+  cp -r "${dx_scripts}"/* "${project_dx_dir}"
   log "✅" "${project_dx_dir} is ready"
 }
 
 parse_command_line() {
-  while getopts "hp:o:t:i:a:n:" opt "${@}"; do
+  while getopts "hp:o:t:i:a:n:g:e:" opt "${@}"; do
     case ${opt} in
       h )
         usage "DETAILED"
         ;;
       a )
         PROJECT_ROOT="${OPTARG}"
+        ;;
+      e )
+        GIT_EMAIL="${OPTARG}"
+        ;;
+      g )
+        GIT_NAME="${OPTARG}"
         ;;
       i )
         BASE_IMAGE="${OPTARG}"
@@ -279,24 +200,38 @@ usage() {
       echo
     fi
   fi
-  echo "usage: $0 [-h] [-p project_name] [-o org] [-t tag] [-a path_to_app] [-i base_image]"
+  echo "usage: $0 -a path_to_app -o org_name -i base_image \\"
+  echo "          [-e git_email] [-g git_name] \\"
+  echo "          [-p port] [-n project_name] [-t tag]"
   if [ -n "${error_message}" ]; then
     if [ "${error_message}" = "DETAILED" ]; then
       echo
       echo "DESCRIPTION"
       echo
       echo "    Initializes your project with Devbox. This will create a Dockerfile and"
-      echo "    a Docker Compose file to run your project"
+      echo "    a Docker Compose file to run your project and copy several scripts to"
+      echo "    interact with your dev evironment. Your project will NOT have a dependency"
+      echo "    on devbox - you will own the files and scripts after you run this command."
       echo
       echo "OPTIONS"
       echo
       echo "    -h - show this help"
       echo "    -a - path to your app - will be created if not present (required)"
+      echo "    -e - git email for the Dockerfile's get setup. Defaults to git config --global user.email"
+      echo "    -g - git name for the Dockerfile's get setup. Defaults to git config --global user.name"
       echo "    -i - base image to use for Dockerfile (required)"
       echo "    -n - the name of your project. Defaults to the name of the directory for path_to_app"
-      echo "    -o - the name of your project's org on DockerHub (or GitHub)"
+      echo "    -o - the name of your project's org on DockerHub or GitHub (required)"
       echo "    -p - the port on which your project runs. If omitted, no port will be exposed"
       echo "    -t - a tag to use for your development container.  Defaults to the base_image name"
+      echo
+      echo "EXAMPLES"
+      echo
+      echo "   # my-new-app uses Node"
+      echo "   devbox/bin/install -a my-new-app -i node:26 -o cyberdyne"
+      echo
+      echo "   # my-new-app uses Debian and will run on port 8088"
+      echo "   devbox/bin/install -a my-new-app -i bookworm -o cyberdyne -p 8088"
     fi
   fi
   exit 1

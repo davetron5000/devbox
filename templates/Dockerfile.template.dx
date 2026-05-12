@@ -1,0 +1,95 @@
+FROM %%BASE_IMAGE%%
+
+# This attempts to make RUN directives fail when UNIX pipelines are involved
+SHELL [ "/bin/bash", "-o", "pipefail", "-c" ]
+
+# This tells apt-get and friends not to ask for interactive input
+# as this creates massive confusion in the context of building a Docker image.
+ENV DEBIAN_FRONTEND=noninteractive
+
+# These packages are needed to set up other repos to install other
+# packages and/or are useful in installing other software
+#
+# --mount=type=cache,target=/var/cache/apt means that we'll save
+# the downloaded file used to install between builds, so that if they
+# have not changed, builds will be faster.
+#
+# - ca-certificates  - needed by Postgres client
+# - curl             - needed by various installation instructions
+# - gnupg            - needed to install Docker
+# - lsb-release      - needed by Postgres install instructions
+# - rsync            - needed by Brut's build_assets command
+# - vim              - needed when we want to edit files inside container
+RUN --mount=type=cache,target=/var/cache/apt \
+    apt-get -y clean && \
+    apt-get -y update && \
+    apt-get install --quiet --yes --no-install-recommends \
+      ca-certificates \
+      curl \
+      gnupg \
+      lsb-release \
+      postgresql-common  \
+      rsync \
+      vim
+
+# Up to now, RUN directives ran as the root user.  When using this container
+# for development, we do not want to run as the root user.  On macOS, this is not 
+# a big deal, but in Linux, the root user inside this container can create files
+# as the root user on your computer. You don't want that.
+
+# What is tricky is that we ultimately want the non-root user here
+# to have the same UID and same groups as your user on your host/computer.
+# And, we want that user to be able to run Docker commands.
+
+# First, set up some build args that `dx/build` will override with the actual values.
+# The reason these all have values is that Docker will not fail if they are omitted,
+# but it will behave strangely.
+#
+# Their user id, which ideally is overridden to match your user id on the host
+ARG user_uid=10001
+
+# Their group id, which ideally is overridden to match your group id on the host
+ARG user_gid=10002
+
+# The group id that can access /var/run/docker.sock on the host.
+# If this isn't mapped properly, no docker-out-of-docker commands will work
+ARG docker_gid=10003
+
+# This can be blank if the OS is such that the user inside the container can access
+# /var/run/docker.sock simply from being in docker_gid.  If this is not
+# the case (as on macOS), it is not only sad, but we must add the group
+# 0 (root) to the groups our new user is in.
+ARG sadly_user_must_be_added_to_root=
+
+# Create the user's group ID if it does not exist
+RUN getent group ${user_gid} || groupadd --gid ${user_gid} appgroup
+
+# Create the docker group id if it does not exist
+RUN getent group ${docker_gid} || groupadd --gid ${docker_gid} hostdocker
+
+# Create the user and set up their shell.
+# Note that we put bash customizations in both .profile and .bashrc
+# to increase the chances they are used when running bash in various configurations
+RUN useradd --uid ${user_uid} --gid ${user_gid} --groups ${sadly_user_must_be_added_to_root}${docker_gid} --create-home --home-dir /home/appuser appuser && \
+    echo ". ~/.customizations.project.bash" >> /home/appuser/.profile && \
+    echo ". ~/.customizations.local.bash" >> /home/appuser/.profile && \
+    echo ". ~/.customizations.project.bash" >> /home/appuser/.bashrc && \
+    echo ". ~/.customizations.local.bash" >> /home/appuser/.bashrc
+
+# Now we must grant ownership to the new user over various files they will need to
+# run or use
+COPY --chown=appuser:${user_gid} dx/show-help-in-app-container-then-wait.sh /home/appuser
+COPY --chown=appuser:${user_gid} dx/customizations.project.bash /home/appuser/.customizations.project.bash
+COPY --chown=appuser:${user_gid} dx/customizations.local.bash /home/appuser/.customizations.local.bash
+
+# This switches to the new user, meaniung all subsequent RUN directives will
+# be run as this user.  The USER directive allows changing both the user
+# and the current group. We are omitting the group part of that because
+# to include would exclude the user from all other groups we just set them up
+# as belonging to.
+USER appuser
+
+RUN git config --global user.email '%%GIT_EMAIL%%' && \
+    git config --global user.name '%%GIT_NAME%%'
+
+WORKDIR /home/appuser

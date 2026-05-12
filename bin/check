@@ -3,6 +3,9 @@
 set -e
 
 echo "[ $0 ] Checking bin/"
-shellcheck -x -P dx-scripts bin/*
+readarray -t bin_files < <(find bin -type f -not -name 'README')
+shellcheck -x -P dx-scripts "${bin_files[@]}"
+
 echo "[ $0 ] Checking dx-scripts/"
-shellcheck -x -P dx-scripts dx-scripts/*
+readarray -t dx_files < <(find dx-scripts -type f -not -name 'README')
+shellcheck -x -P dx-scripts "${dx_files[@]}"

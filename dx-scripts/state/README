@@ -1,0 +1,7 @@
+This holds CLI state from stuff run inside the
+Docker container.  This allows you to persist
+information across restarts of your Docker
+setup without having to manage an explicit
+volume. This should have been added to
+.gitignore as it should not be checked into 
+version control

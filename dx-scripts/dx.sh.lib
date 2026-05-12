@@ -8,6 +8,7 @@ require_command "cat"
 ENV_FILE=$(realpath "${SCRIPT_DIR}")/docker-compose.env
 
 load_docker_compose_env() {
+  # shellcheck source=/dev/null
   . "${ENV_FILE}"
 }
 
