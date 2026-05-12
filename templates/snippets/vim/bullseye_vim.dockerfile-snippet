@@ -1,6 +1,0 @@
-# dx.source=https://packages.debian.org/search?keywords=vim
-# dx.stability=vendor
-ENV EDITOR=vim
-RUN apt-get install -y vim && \
-    echo "set -o vi" >> /root/.bashrc
-# vim: ft=Dockerfile
