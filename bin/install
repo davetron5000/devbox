@@ -10,7 +10,7 @@ LOCAL_DX_SCRIPTS_DIR=$(realpath "${SCRIPT_DIR}"/../dx-scripts)
 DX_RELATIVE_DIR=dx
 COMPOSE_TEMPLATE=$(realpath "${SCRIPT_DIR}"/../templates/docker-compose.template.yml)
 COMPOSE_ENV_TEMPLATE=$(realpath "${SCRIPT_DIR}"/../templates/docker-compose.template.env)
-DOCKERFILE_TEMPLATE=$(realpath "${SCRIPT_DIR}"/../templates/Docker.template.dx)
+DOCKERFILE_TEMPLATE=$(realpath "${SCRIPT_DIR}"/../templates/Dockerfile.template.dx)
 GIT_EMAIL=$(git config --global user.email || 'your-git-email@example.com')
 GIT_NAME=$(git config --global user.name || 'Your Git Name')
 
@@ -52,15 +52,15 @@ setup_project_dir_if_needed() {
   
   touch "$gitignore"
   if ! grep -qxF '/dx/customizations.local.bash' "$gitignore"; then
-    echo '# per-developer Bash configuration'
+    echo '# per-developer Bash configuration' >> "$gitignore"
     echo '/dx/customizations.local.bash' >> "$gitignore"
   fi
   if ! grep -qxF '/dx/credentials' "$gitignore"; then
-    echo '# per-developer secrets/credentials'
+    echo '# per-developer secrets/credentials' >> "$gitignore"
     echo '/dx/credentials' >> "$gitignore"
   fi
   if ! grep -qxF '/dx/state' "$gitignore"; then
-    echo '# per-developer CLI state that must persist across containers'
+    echo '# per-developer CLI state that must persist across containers' >> "$gitignore"
     echo '/dx/state' >> "$gitignore"
   fi
 
